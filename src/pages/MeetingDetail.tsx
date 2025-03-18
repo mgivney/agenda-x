@@ -1,4 +1,3 @@
-
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -47,7 +46,6 @@ const MeetingDetail = () => {
         setMeeting(foundMeeting);
         setConclusion(foundMeeting.conclusion);
         
-        // Initialize member ratings from meeting data or default to 5
         const initialRatings: Record<string, number> = {};
         foundMeeting.members.forEach(member => {
           initialRatings[member] = foundMeeting.memberRatings?.[member] || 5;
@@ -313,56 +311,57 @@ const MeetingDetail = () => {
           <TabsContent value="conclusion">
             <Card>
               <CardHeader>
-                <CardTitle>Member Ratings (1-10)</CardTitle>
+                <CardTitle>Meeting Ratings</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Member</TableHead>
-                      <TableHead>Rating</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {meeting.members.map(member => (
-                      <TableRow key={member}>
-                        <TableCell className="font-medium">{member}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-1">
-                            {[...Array(memberRatings[member] || 0)].map((_, i) => (
-                              <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                            ))}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => handleRatingChange(member, (memberRatings[member] || 5) - 1)}
-                            >
-                              -
-                            </Button>
-                            <span className="w-8 text-center">{memberRatings[member] || 5}</span>
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => handleRatingChange(member, (memberRatings[member] || 5) + 1)}
-                            >
-                              +
-                            </Button>
-                          </div>
-                        </TableCell>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        {meeting.members.map(member => (
+                          <TableHead key={member}>{member}</TableHead>
+                        ))}
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      <TableRow>
+                        {meeting.members.map(member => (
+                          <TableCell key={member}>
+                            <div className="flex flex-col items-center gap-1">
+                              <div className="flex items-center">
+                                {[...Array(memberRatings[member] || 0)].map((_, i) => (
+                                  <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                                ))}
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  onClick={() => handleRatingChange(member, (memberRatings[member] || 5) - 1)}
+                                >
+                                  -
+                                </Button>
+                                <span className="w-8 text-center">{memberRatings[member] || 5}</span>
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  onClick={() => handleRatingChange(member, (memberRatings[member] || 5) + 1)}
+                                >
+                                  +
+                                </Button>
+                              </div>
+                            </div>
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </div>
 
                 <Separator className="my-4" />
                 
                 <div>
-                  <h3 className="text-lg font-medium mb-2">Meeting Notes</h3>
+                  <h3 className="text-lg font-medium mb-2">Cascading Messaging</h3>
                   <Textarea
                     placeholder="Enter meeting conclusion and key takeaways..."
                     className="min-h-[100px]"
