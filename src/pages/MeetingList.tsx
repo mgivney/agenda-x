@@ -1,11 +1,10 @@
 
 import Header from "@/components/Header";
 import MeetingCard from "@/components/MeetingCard";
-import { Meeting, meetingStore } from "@/store/meetingStore";
-import { useStore } from "react-simple-store";
+import { Meeting, useMeetingContext } from "@/store/meetingContext";
 
 const MeetingList = () => {
-  const { meetings, currentUser } = useStore(meetingStore);
+  const { meetings, currentUser } = useMeetingContext();
   
   // Filter meetings where the current user is a member
   const userMeetings = meetings.filter(meeting => 

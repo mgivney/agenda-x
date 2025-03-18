@@ -9,19 +9,20 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { 
   Meeting, 
-  meetingStore, 
-  updateMeetingConclusion, 
-  updateRockStatus,
-  updateTodoStatus
-} from "@/store/meetingStore";
+  useMeetingContext
+} from "@/store/meetingContext";
 import { CheckCircle, Circle, Clock, Plus, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useStore } from "react-simple-store";
 import { useParams } from "react-router-dom";
 
 const MeetingDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const { meetings } = useStore(meetingStore);
+  const { 
+    meetings, 
+    updateMeetingConclusion,
+    updateRockStatus,
+    updateTodoStatus
+  } = useMeetingContext();
   const [meeting, setMeeting] = useState<Meeting | null>(null);
   const [conclusion, setConclusion] = useState("");
   const { toast } = useToast();
