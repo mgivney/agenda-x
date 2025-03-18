@@ -10,7 +10,7 @@ import {
   Meeting, 
   useMeetingContext
 } from "@/store/meetingContext";
-import { CheckCircle, Circle, Clock, GripVertical, MessageSquare, Plus, Star, XCircle } from "lucide-react";
+import { CheckCircle, ChevronDown, ChevronUp, Circle, Clock, GripVertical, MessageSquare, Plus, Star, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { 
@@ -38,23 +38,28 @@ import {
   verticalListSortingStrategy
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
-const IssueDetailsDialog = ({ 
-  issue, 
-  isOpen, 
-  onClose 
-}: { 
-  issue: any; 
-  isOpen: boolean; 
-  onClose: () => void 
-}) => {
+const SortableIssueItem = ({ issue, index }: { issue: any, index: number }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+  } = useSortable({ id: issue.id });
+  
+  const [isExpanded, setIsExpanded] = useState(false);
   const [comments, setComments] = useState<{ id: string; user: string; text: string; timestamp: string }[]>(
     issue?.comments || []
   );
   const [newComment, setNewComment] = useState("");
   const { toast } = useToast();
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
 
   const handleAddComment = () => {
     if (!newComment.trim()) return;
@@ -76,80 +81,8 @@ const IssueDetailsDialog = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-lg">
-        <DialogHeader>
-          <DialogTitle>{issue?.description}</DialogTitle>
-          <DialogDescription className="text-eos-gray">
-            Reported by: {issue?.reporter} · Category: {issue?.category}
-          </DialogDescription>
-        </DialogHeader>
-        
-        <div className="space-y-4 mt-4">
-          <div className="bg-muted/40 p-4 rounded-md">
-            <h3 className="text-sm font-medium mb-2">Issue Details:</h3>
-            <p className="text-sm">{issue?.details || "No additional details provided."}</p>
-          </div>
-          
-          <div>
-            <h3 className="text-sm font-medium mb-2 flex items-center gap-2">
-              <MessageSquare size={16} />
-              Comments
-            </h3>
-            
-            {comments.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No comments yet. Be the first to comment!</p>
-            ) : (
-              <div className="space-y-3">
-                {comments.map((comment) => (
-                  <div key={comment.id} className="bg-muted/30 p-3 rounded-md">
-                    <div className="flex justify-between items-start mb-1">
-                      <span className="font-medium text-sm">{comment.user}</span>
-                      <span className="text-xs text-muted-foreground">{comment.timestamp}</span>
-                    </div>
-                    <p className="text-sm">{comment.text}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-            
-            <div className="mt-4">
-              <Textarea
-                placeholder="Add a comment..."
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                className="min-h-[80px]"
-              />
-              <div className="flex justify-end mt-2">
-                <Button size="sm" onClick={handleAddComment}>Add Comment</Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-};
-
-const SortableIssueItem = ({ issue, index }: { issue: any, index: number }) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({ id: issue.id });
-  
-  const [showDetails, setShowDetails] = useState(false);
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
-
-  return (
-    <>
-      <Card key={issue.id} ref={setNodeRef} style={style} className="mb-4">
+    <div className="mb-4">
+      <Card ref={setNodeRef} style={style}>
         <CardContent className="p-4">
           <div className="flex items-start gap-2">
             <div 
@@ -165,28 +98,73 @@ const SortableIssueItem = ({ issue, index }: { issue: any, index: number }) => {
               </div>
               <div className="flex justify-between mt-1">
                 <p className="text-sm text-eos-gray">Reported by: {issue.reporter}</p>
-                <Button 
-                  variant="link" 
-                  size="sm" 
-                  className="p-0 h-auto text-eos-blue"
-                  onClick={() => setShowDetails(true)}
+                <CollapsibleTrigger 
+                  onClick={() => setIsExpanded(!isExpanded)}
+                  className="flex items-center text-eos-blue text-sm hover:underline"
                 >
-                  More
-                </Button>
+                  {isExpanded ? (
+                    <>Less <ChevronUp size={14} className="ml-1" /></>
+                  ) : (
+                    <>More <ChevronDown size={14} className="ml-1" /></>
+                  )}
+                </CollapsibleTrigger>
               </div>
             </div>
           </div>
         </CardContent>
       </Card>
       
-      {showDetails && (
-        <IssueDetailsDialog 
-          issue={issue} 
-          isOpen={showDetails} 
-          onClose={() => setShowDetails(false)} 
-        />
-      )}
-    </>
+      <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
+        <CollapsibleContent className="mt-1 bg-gray-50 rounded-md p-4 border shadow-sm animate-accordion-down">
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-sm font-medium mb-1">Issue Details:</h3>
+              <div className="bg-white p-3 rounded-md border">
+                <p className="text-sm">{issue?.details || "No additional details provided."}</p>
+                <div className="mt-2 text-xs text-muted-foreground">
+                  Category: {issue?.category}
+                </div>
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="text-sm font-medium mb-2 flex items-center gap-2">
+                <MessageSquare size={16} />
+                Comments
+              </h3>
+              
+              {comments.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No comments yet. Be the first to comment!</p>
+              ) : (
+                <div className="space-y-3">
+                  {comments.map((comment) => (
+                    <div key={comment.id} className="bg-white p-3 rounded-md border">
+                      <div className="flex justify-between items-start mb-1">
+                        <span className="font-medium text-sm">{comment.user}</span>
+                        <span className="text-xs text-muted-foreground">{comment.timestamp}</span>
+                      </div>
+                      <p className="text-sm">{comment.text}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              <div className="mt-4">
+                <Textarea
+                  placeholder="Add a comment..."
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  className="min-h-[80px] bg-white"
+                />
+                <div className="flex justify-end mt-2">
+                  <Button size="sm" onClick={handleAddComment}>Add Comment</Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CollapsibleContent>
+      </Collapsible>
+    </div>
   );
 };
 
@@ -567,4 +545,3 @@ const MeetingDetail = () => {
 };
 
 export default MeetingDetail;
-
