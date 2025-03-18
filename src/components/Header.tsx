@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface HeaderProps {
   title: string;
@@ -39,6 +39,10 @@ const Header = ({ title, showBackButton = false }: HeaderProps) => {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="relative h-8 w-8 rounded-full">
               <Avatar className="h-9 w-9 bg-eos-lightBlue/40 text-white">
+                <AvatarImage 
+                  src="https://images.unsplash.com/photo-1581092795360-fd1ca04f0952" 
+                  alt="Profile"
+                />
                 <AvatarFallback>
                   <User size={16} />
                 </AvatarFallback>
