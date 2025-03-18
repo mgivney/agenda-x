@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 export interface Todo {
@@ -99,7 +98,7 @@ const initialMeetings: Meeting[] = [
       {
         id: '103',
         description: 'Develop social media strategy for Q4',
-        owner: 'Current User',
+        owner: 'You',
         status: 'on-track',
         createdAt: '2023-11-02'
       }
@@ -120,7 +119,7 @@ const initialMeetings: Meeting[] = [
       {
         id: '203',
         content: 'Email newsletter open rate increased by 15%',
-        reporter: 'Current User',
+        reporter: 'You',
         createdAt: '2023-11-05'
       }
     ],
@@ -142,7 +141,7 @@ const initialMeetings: Meeting[] = [
       {
         id: '303',
         description: 'Prepare content calendar for November',
-        assignee: 'Current User',
+        assignee: 'You',
         completed: false,
         createdAt: '2023-10-25'
       }
@@ -165,13 +164,13 @@ const initialMeetings: Meeting[] = [
       {
         id: '403',
         description: 'Competitor launched similar campaign',
-        reporter: 'Current User',
+        reporter: 'You',
         category: 'Competition',
         createdAt: '2023-11-01'
       }
     ],
     conclusion: '',
-    members: ['Jane Smith', 'John Doe', 'Current User']
+    members: ['Jane Smith', 'John Doe', 'You']
   },
   {
     id: '2',
@@ -198,7 +197,7 @@ const initialMeetings: Meeting[] = [
       {
         id: '106',
         description: 'Develop sales training program',
-        owner: 'Current User',
+        owner: 'You',
         status: 'off-track',
         createdAt: '2023-10-01'
       }
@@ -219,7 +218,7 @@ const initialMeetings: Meeting[] = [
       {
         id: '206',
         content: 'New territory expansion approved',
-        reporter: 'Current User',
+        reporter: 'You',
         createdAt: '2023-11-02'
       }
     ],
@@ -241,7 +240,7 @@ const initialMeetings: Meeting[] = [
       {
         id: '306',
         description: 'Create proposal for enterprise client',
-        assignee: 'Current User',
+        assignee: 'You',
         completed: true,
         createdAt: '2023-10-20'
       }
@@ -264,13 +263,13 @@ const initialMeetings: Meeting[] = [
       {
         id: '406',
         description: 'Pricing concerns from multiple prospects',
-        reporter: 'Current User',
+        reporter: 'You',
         category: 'Pricing',
         createdAt: '2023-10-25'
       }
     ],
     conclusion: '',
-    members: ['Alex Johnson', 'Sarah Williams', 'Current User']
+    members: ['Alex Johnson', 'Sarah Williams', 'You']
   },
   {
     id: '3',
@@ -297,7 +296,7 @@ const initialMeetings: Meeting[] = [
       {
         id: '109',
         description: 'Prepare annual shareholder presentation',
-        owner: 'Current User',
+        owner: 'You',
         status: 'completed',
         createdAt: '2023-10-05'
       }
@@ -318,7 +317,7 @@ const initialMeetings: Meeting[] = [
       {
         id: '209',
         content: 'Q3 financial results exceed expectations',
-        reporter: 'Current User',
+        reporter: 'You',
         createdAt: '2023-10-15'
       }
     ],
@@ -340,7 +339,7 @@ const initialMeetings: Meeting[] = [
       {
         id: '309',
         description: 'Finalize executive compensation plan',
-        assignee: 'Current User',
+        assignee: 'You',
         completed: false,
         createdAt: '2023-10-20'
       }
@@ -363,13 +362,13 @@ const initialMeetings: Meeting[] = [
       {
         id: '409',
         description: 'Supply chain disruptions affecting delivery',
-        reporter: 'Current User',
+        reporter: 'You',
         category: 'Operations',
         createdAt: '2023-10-12'
       }
     ],
     conclusion: '',
-    members: ['Michael Roberts', 'Lisa Chen', 'Current User']
+    members: ['Michael Roberts', 'Lisa Chen', 'You']
   }
 ];
 
@@ -380,7 +379,7 @@ export const MeetingProvider: React.FC<{children: ReactNode}> = ({ children }) =
   const [currentMeetingId, setCurrentMeetingId] = useState<string | null>(null);
   const currentUser = {
     id: '1001',
-    name: 'Current User'
+    name: 'You'
   };
 
   const setCurrentMeeting = (meetingId: string | null) => {
