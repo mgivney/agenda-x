@@ -1,3 +1,4 @@
+
 import Header from "@/components/Header";
 import MeetingCard from "@/components/MeetingCard";
 import { Meeting, useMeetingContext } from "@/store/meetingContext";
@@ -51,7 +52,7 @@ const MeetingList = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header title="My L10 Meetings" />
+      <Header title="Entrepeneur Chronicle" />
       
       <div className="container max-w-6xl mx-auto py-6 px-4">
         <div className="flex flex-col lg:flex-row gap-6">
