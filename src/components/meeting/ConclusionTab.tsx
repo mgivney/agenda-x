@@ -11,7 +11,7 @@ interface ConclusionTabProps {
   memberRatings: Record<string, number>;
   conclusion: string;
   onMemberRatingChange: (member: string, rating: number) => void;
-  onConclusionChange: (conclusion: string) => void;
+  onConclusionChange: (value: string) => void;
   onSaveConclusion: () => void;
 }
 

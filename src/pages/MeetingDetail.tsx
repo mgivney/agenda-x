@@ -159,7 +159,7 @@ const MeetingDetail = () => {
               memberRatings={memberRatings}
               conclusion={conclusion}
               onMemberRatingChange={handleRatingChange}
-              onConclusionChange={handleConclusionChange}
+              onConclusionChange={(value: string) => setConclusion(value)}
               onSaveConclusion={saveConclusion}
             />
           </TabsContent>

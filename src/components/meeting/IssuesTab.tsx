@@ -15,6 +15,7 @@ import {
 } from '@dnd-kit/core';
 import {
   SortableContext,
+  arrayMove,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy
 } from '@dnd-kit/sortable';
@@ -37,7 +38,7 @@ const IssuesTab = ({ issues, meetingId, onAddIssue, onReorderIssues }: IssuesTab
     useSensor(PointerSensor, {
       // Decrease the activation constraint to make dragging more responsive
       activationConstraint: {
-        distance: 5, // Reduced from default
+        distance: 2, // Further reduced for easier activation
       }
     }),
     useSensor(KeyboardSensor, {
@@ -54,6 +55,7 @@ const IssuesTab = ({ issues, meetingId, onAddIssue, onReorderIssues }: IssuesTab
       
       // Only proceed if both indices are valid
       if (oldIndex !== -1 && newIndex !== -1) {
+        // Directly call the parent handler
         onReorderIssues(oldIndex, newIndex);
         
         toast({
