@@ -22,12 +22,16 @@ import { useToast } from "@/components/ui/use-toast";
 
 interface IssuesTabProps {
   issues: Issue[];
+  meetingId: string;
   onAddIssue?: () => void;
   onReorderIssues: (oldIndex: number, newIndex: number) => void;
 }
 
-const IssuesTab = ({ issues, onAddIssue, onReorderIssues }: IssuesTabProps) => {
+const IssuesTab = ({ issues, meetingId, onAddIssue, onReorderIssues }: IssuesTabProps) => {
   const { toast } = useToast();
+  
+  // Filter out resolved issues
+  const activeIssues = issues.filter(issue => !issue.resolved);
   
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -40,8 +44,8 @@ const IssuesTab = ({ issues, onAddIssue, onReorderIssues }: IssuesTabProps) => {
     const { active, over } = event;
     
     if (over && active.id !== over.id) {
-      const oldIndex = issues.findIndex(issue => issue.id === active.id);
-      const newIndex = issues.findIndex(issue => issue.id === over.id);
+      const oldIndex = activeIssues.findIndex(issue => issue.id === active.id);
+      const newIndex = activeIssues.findIndex(issue => issue.id === over.id);
       
       onReorderIssues(oldIndex, newIndex);
       
@@ -66,10 +70,10 @@ const IssuesTab = ({ issues, onAddIssue, onReorderIssues }: IssuesTabProps) => {
         </Button>
       </div>
       
-      {issues.length === 0 ? (
+      {activeIssues.length === 0 ? (
         <Card>
           <CardContent className="text-center py-10">
-            <p className="text-eos-gray">No issues for this meeting.</p>
+            <p className="text-eos-gray">No active issues for this meeting.</p>
           </CardContent>
         </Card>
       ) : (
@@ -80,11 +84,16 @@ const IssuesTab = ({ issues, onAddIssue, onReorderIssues }: IssuesTabProps) => {
             onDragEnd={handleDragEnd}
           >
             <SortableContext
-              items={issues.map(issue => issue.id)}
+              items={activeIssues.map(issue => issue.id)}
               strategy={verticalListSortingStrategy}
             >
-              {issues.map((issue, index) => (
-                <SortableIssueItem key={issue.id} issue={issue} index={index} />
+              {activeIssues.map((issue, index) => (
+                <SortableIssueItem 
+                  key={issue.id} 
+                  issue={issue} 
+                  index={index} 
+                  meetingId={meetingId}
+                />
               ))}
             </SortableContext>
           </DndContext>

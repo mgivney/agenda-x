@@ -6,8 +6,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
-import { ChevronDown, ChevronUp, GripVertical, MessageSquare } from "lucide-react";
+import { ChevronDown, ChevronUp, GripVertical, Check, Clock } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { useMeetingContext } from "@/store/meetingContext";
 
 interface SortableIssueItemProps {
   issue: {
@@ -16,17 +17,16 @@ interface SortableIssueItemProps {
     reporter: string;
     category: string;
     details?: string;
-    comments?: {
-      id: string;
-      user: string;
-      text: string;
-      timestamp: string;
-    }[];
+    createdAt: string;
+    resolved?: boolean;
+    resolution?: string;
+    resolvedAt?: string;
   };
   index: number;
+  meetingId: string;
 }
 
-const SortableIssueItem = ({ issue, index }: SortableIssueItemProps) => {
+const SortableIssueItem = ({ issue, index, meetingId }: SortableIssueItemProps) => {
   const {
     attributes,
     listeners,
@@ -36,33 +36,30 @@ const SortableIssueItem = ({ issue, index }: SortableIssueItemProps) => {
   } = useSortable({ id: issue.id });
   
   const [isExpanded, setIsExpanded] = useState(false);
-  const [comments, setComments] = useState<{ id: string; user: string; text: string; timestamp: string }[]>(
-    issue?.comments || []
-  );
-  const [newComment, setNewComment] = useState("");
+  const [resolution, setResolution] = useState("");
   const { toast } = useToast();
+  const { resolveIssue } = useMeetingContext();
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
   };
 
-  const handleAddComment = () => {
-    if (!newComment.trim()) return;
+  const handleResolveIssue = () => {
+    if (!resolution.trim()) {
+      toast({
+        title: "Resolution required",
+        description: "Please provide a resolution before resolving the issue.",
+        variant: "destructive"
+      });
+      return;
+    }
     
-    const comment = {
-      id: Date.now().toString(),
-      user: "You",
-      text: newComment,
-      timestamp: new Date().toLocaleString()
-    };
-    
-    setComments([...comments, comment]);
-    setNewComment("");
+    resolveIssue(meetingId, issue.id, resolution);
     
     toast({
-      title: "Comment added",
-      description: "Your comment has been added to the discussion.",
+      title: "Issue resolved",
+      description: "The issue has been successfully resolved.",
     });
   };
 
@@ -84,16 +81,26 @@ const SortableIssueItem = ({ issue, index }: SortableIssueItemProps) => {
                   <h4 className="font-medium">{issue.description}</h4>
                 </div>
                 <div className="flex justify-between mt-1">
-                  <p className="text-sm text-eos-gray">Reported by: {issue.reporter}</p>
-                  <CollapsibleTrigger 
-                    className="flex items-center text-eos-blue text-sm hover:underline"
-                  >
-                    {isExpanded ? (
-                      <>Less <ChevronUp size={14} className="ml-1" /></>
-                    ) : (
-                      <>More <ChevronDown size={14} className="ml-1" /></>
+                  <div className="text-sm text-eos-gray">
+                    <span>Reported by: {issue.reporter}</span>
+                    {issue.resolved && issue.resolvedAt && (
+                      <div className="flex items-center text-green-600 mt-1 text-xs">
+                        <Check size={14} className="mr-1" />
+                        <span>Resolved: {issue.resolvedAt}</span>
+                      </div>
                     )}
-                  </CollapsibleTrigger>
+                  </div>
+                  {!issue.resolved && (
+                    <CollapsibleTrigger 
+                      className="flex items-center text-eos-blue text-sm hover:underline"
+                    >
+                      {isExpanded ? (
+                        <>Less <ChevronUp size={14} className="ml-1" /></>
+                      ) : (
+                        <>More <ChevronDown size={14} className="ml-1" /></>
+                      )}
+                    </CollapsibleTrigger>
+                  )}
                 </div>
               </div>
             </div>
@@ -112,40 +119,37 @@ const SortableIssueItem = ({ issue, index }: SortableIssueItemProps) => {
               </div>
             </div>
             
-            <div>
-              <h3 className="text-sm font-medium mb-2 flex items-center gap-2">
-                <MessageSquare size={16} />
-                Comments
-              </h3>
-              
-              {comments.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No comments yet. Be the first to comment!</p>
-              ) : (
-                <div className="space-y-3">
-                  {comments.map((comment) => (
-                    <div key={comment.id} className="bg-white p-3 rounded-md border">
-                      <div className="flex justify-between items-start mb-1">
-                        <span className="font-medium text-sm">{comment.user}</span>
-                        <span className="text-xs text-muted-foreground">{comment.timestamp}</span>
-                      </div>
-                      <p className="text-sm">{comment.text}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-              
-              <div className="mt-4">
-                <Textarea
-                  placeholder="Add a comment..."
-                  value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
-                  className="min-h-[80px] bg-white"
-                />
-                <div className="flex justify-end mt-2">
-                  <Button size="sm" onClick={handleAddComment}>Add Comment</Button>
+            {issue.resolved && issue.resolution ? (
+              <div>
+                <h3 className="text-sm font-medium mb-2 flex items-center gap-2">
+                  <Check size={16} className="text-green-600" />
+                  Resolution
+                </h3>
+                <div className="bg-white p-3 rounded-md border">
+                  <p className="text-sm">{issue.resolution}</p>
+                  <div className="mt-2 text-xs text-muted-foreground flex items-center">
+                    <Clock size={14} className="mr-1" />
+                    {issue.resolvedAt}
+                  </div>
                 </div>
               </div>
-            </div>
+            ) : (
+              <div>
+                <h3 className="text-sm font-medium mb-2 flex items-center gap-2">
+                  <Check size={16} />
+                  Resolution
+                </h3>
+                <Textarea
+                  placeholder="Enter resolution details..."
+                  value={resolution}
+                  onChange={(e) => setResolution(e.target.value)}
+                  className="min-h-[80px] bg-white mb-2"
+                />
+                <div className="flex justify-end">
+                  <Button onClick={handleResolveIssue}>Resolve Issue</Button>
+                </div>
+              </div>
+            )}
           </div>
         </CollapsibleContent>
       </Collapsible>

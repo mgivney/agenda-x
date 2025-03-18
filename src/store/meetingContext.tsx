@@ -28,7 +28,11 @@ export interface Issue {
   description: string;
   reporter: string;
   category: string;
+  details?: string;
   createdAt: string;
+  resolved?: boolean;
+  resolution?: string;
+  resolvedAt?: string;
 }
 
 export interface Message {
@@ -70,6 +74,7 @@ interface MeetingContextType {
   updateMemberRating: (meetingId: string, member: string, rating: number) => void;
   sendMessage: (meetingId: string, content: string) => void;
   reorderIssues: (meetingId: string, oldIndex: number, newIndex: number) => void;
+  resolveIssue: (meetingId: string, issueId: string, resolution: string) => void;
 }
 
 const initialMeetings: Meeting[] = [
@@ -495,6 +500,30 @@ export const MeetingProvider: React.FC<{children: ReactNode}> = ({ children }) =
     }));
   };
 
+  const resolveIssue = (meetingId: string, issueId: string, resolution: string) => {
+    setMeetings(meetings.map(meeting => {
+      if (meeting.id === meetingId) {
+        const updatedIssues = meeting.issues.map(issue => {
+          if (issue.id === issueId) {
+            return {
+              ...issue,
+              resolved: true,
+              resolution,
+              resolvedAt: new Date().toLocaleString()
+            };
+          }
+          return issue;
+        });
+        
+        return {
+          ...meeting,
+          issues: updatedIssues
+        };
+      }
+      return meeting;
+    }));
+  };
+
   return (
     <MeetingContext.Provider 
       value={{ 
@@ -510,7 +539,8 @@ export const MeetingProvider: React.FC<{children: ReactNode}> = ({ children }) =
         addHeadline,
         updateMemberRating,
         sendMessage,
-        reorderIssues
+        reorderIssues,
+        resolveIssue
       }}
     >
       {children}

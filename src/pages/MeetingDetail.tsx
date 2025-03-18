@@ -147,7 +147,8 @@ const MeetingDetail = () => {
           
           <TabsContent value="issues">
             <IssuesTab 
-              issues={meeting.issues} 
+              issues={meeting.issues}
+              meetingId={id || ""}
               onReorderIssues={handleReorderIssues}
             />
           </TabsContent>
