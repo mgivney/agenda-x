@@ -10,7 +10,7 @@ import {
   Meeting, 
   useMeetingContext
 } from "@/store/meetingContext";
-import { CheckCircle, Circle, Clock, GripVertical, Plus, Star, XCircle } from "lucide-react";
+import { CheckCircle, Circle, Clock, GripVertical, MessageSquare, Plus, Star, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { 
@@ -38,8 +38,99 @@ import {
   verticalListSortingStrategy
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
-// Sortable Issue Item Component
+const IssueDetailsDialog = ({ 
+  issue, 
+  isOpen, 
+  onClose 
+}: { 
+  issue: any; 
+  isOpen: boolean; 
+  onClose: () => void 
+}) => {
+  const [comments, setComments] = useState<{ id: string; user: string; text: string; timestamp: string }[]>(
+    issue?.comments || []
+  );
+  const [newComment, setNewComment] = useState("");
+  const { toast } = useToast();
+
+  const handleAddComment = () => {
+    if (!newComment.trim()) return;
+    
+    const comment = {
+      id: Date.now().toString(),
+      user: "You",
+      text: newComment,
+      timestamp: new Date().toLocaleString()
+    };
+    
+    setComments([...comments, comment]);
+    setNewComment("");
+    
+    toast({
+      title: "Comment added",
+      description: "Your comment has been added to the discussion.",
+    });
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-lg">
+        <DialogHeader>
+          <DialogTitle>{issue?.description}</DialogTitle>
+          <DialogDescription className="text-eos-gray">
+            Reported by: {issue?.reporter} · Category: {issue?.category}
+          </DialogDescription>
+        </DialogHeader>
+        
+        <div className="space-y-4 mt-4">
+          <div className="bg-muted/40 p-4 rounded-md">
+            <h3 className="text-sm font-medium mb-2">Issue Details:</h3>
+            <p className="text-sm">{issue?.details || "No additional details provided."}</p>
+          </div>
+          
+          <div>
+            <h3 className="text-sm font-medium mb-2 flex items-center gap-2">
+              <MessageSquare size={16} />
+              Comments
+            </h3>
+            
+            {comments.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No comments yet. Be the first to comment!</p>
+            ) : (
+              <div className="space-y-3">
+                {comments.map((comment) => (
+                  <div key={comment.id} className="bg-muted/30 p-3 rounded-md">
+                    <div className="flex justify-between items-start mb-1">
+                      <span className="font-medium text-sm">{comment.user}</span>
+                      <span className="text-xs text-muted-foreground">{comment.timestamp}</span>
+                    </div>
+                    <p className="text-sm">{comment.text}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            <div className="mt-4">
+              <Textarea
+                placeholder="Add a comment..."
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                className="min-h-[80px]"
+              />
+              <div className="flex justify-end mt-2">
+                <Button size="sm" onClick={handleAddComment}>Add Comment</Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 const SortableIssueItem = ({ issue, index }: { issue: any, index: number }) => {
   const {
     attributes,
@@ -48,6 +139,8 @@ const SortableIssueItem = ({ issue, index }: { issue: any, index: number }) => {
     transform,
     transition,
   } = useSortable({ id: issue.id });
+  
+  const [showDetails, setShowDetails] = useState(false);
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -55,28 +148,45 @@ const SortableIssueItem = ({ issue, index }: { issue: any, index: number }) => {
   };
 
   return (
-    <Card key={issue.id} ref={setNodeRef} style={style} className="mb-4">
-      <CardContent className="p-4">
-        <div className="flex items-start gap-2">
-          <div 
-            className="cursor-grab p-1 mt-1 text-gray-400 hover:text-gray-600 transition-colors"
-            {...attributes}
-            {...listeners}
-          >
-            <GripVertical size={16} />
-          </div>
-          <div className="flex-1">
-            <div className="flex justify-between">
-              <h4 className="font-medium">{issue.description}</h4>
-              <span className="text-xs bg-eos-lightGray px-2 py-1 rounded-full text-eos-gray">
-                {issue.category}
-              </span>
+    <>
+      <Card key={issue.id} ref={setNodeRef} style={style} className="mb-4">
+        <CardContent className="p-4">
+          <div className="flex items-start gap-2">
+            <div 
+              className="cursor-grab p-1 mt-1 text-gray-400 hover:text-gray-600 transition-colors"
+              {...attributes}
+              {...listeners}
+            >
+              <GripVertical size={16} />
             </div>
-            <p className="text-sm text-eos-gray">Reported by: {issue.reporter}</p>
+            <div className="flex-1">
+              <div className="flex justify-between">
+                <h4 className="font-medium">{issue.description}</h4>
+              </div>
+              <div className="flex justify-between mt-1">
+                <p className="text-sm text-eos-gray">Reported by: {issue.reporter}</p>
+                <Button 
+                  variant="link" 
+                  size="sm" 
+                  className="p-0 h-auto text-eos-blue"
+                  onClick={() => setShowDetails(true)}
+                >
+                  More
+                </Button>
+              </div>
+            </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+      
+      {showDetails && (
+        <IssueDetailsDialog 
+          issue={issue} 
+          isOpen={showDetails} 
+          onClose={() => setShowDetails(false)} 
+        />
+      )}
+    </>
   );
 };
 
@@ -95,7 +205,6 @@ const MeetingDetail = () => {
   const [memberRatings, setMemberRatings] = useState<Record<string, number>>({});
   const { toast } = useToast();
   
-  // Setup DnD sensors
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -166,7 +275,6 @@ const MeetingDetail = () => {
     }
   };
 
-  // Handle drag end for issue reordering
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     
@@ -421,7 +529,6 @@ const MeetingDetail = () => {
                   ))}
                 </div>
                 
-                {/* Average Rating Display */}
                 <div className="bg-gray-50 p-4 rounded-md">
                   <div className="flex items-center justify-between">
                     <span className="font-semibold text-gray-700">Average Rating:</span>
@@ -460,3 +567,4 @@ const MeetingDetail = () => {
 };
 
 export default MeetingDetail;
+
