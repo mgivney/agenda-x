@@ -6,12 +6,14 @@ export interface Todo {
   description: string;
   assignee: string;
   completed: boolean;
+  createdAt: string; // Add creation date
 }
 
 export interface Headline {
   id: string;
   content: string;
   reporter: string;
+  createdAt: string; // Add creation date
 }
 
 export interface Rock {
@@ -19,6 +21,7 @@ export interface Rock {
   description: string;
   owner: string;
   status: 'on-track' | 'off-track' | 'completed';
+  createdAt: string; // Add creation date
 }
 
 export interface Issue {
@@ -26,6 +29,7 @@ export interface Issue {
   description: string;
   reporter: string;
   category: string;
+  createdAt: string; // Add creation date
 }
 
 export interface Meeting {
@@ -73,25 +77,42 @@ const initialMeetings: Meeting[] = [
         id: '101',
         description: 'Launch new product landing page',
         owner: 'Jane Smith',
-        status: 'on-track'
+        status: 'on-track',
+        createdAt: '2023-10-15'
       },
       {
         id: '102',
         description: 'Complete Q3 marketing plan',
         owner: 'John Doe',
-        status: 'off-track'
+        status: 'off-track',
+        createdAt: '2023-09-28'
+      },
+      {
+        id: '103',
+        description: 'Develop social media strategy for Q4',
+        owner: 'Current User',
+        status: 'on-track',
+        createdAt: '2023-11-02'
       }
     ],
     headlines: [
       {
         id: '201',
         content: 'Social media campaign reached 10k impressions',
-        reporter: 'Jane Smith'
+        reporter: 'Jane Smith',
+        createdAt: '2023-10-20'
       },
       {
         id: '202',
         content: 'New blog post published with high engagement',
-        reporter: 'John Doe'
+        reporter: 'John Doe',
+        createdAt: '2023-10-18'
+      },
+      {
+        id: '203',
+        content: 'Email newsletter open rate increased by 15%',
+        reporter: 'Current User',
+        createdAt: '2023-11-05'
       }
     ],
     todos: [
@@ -99,13 +120,22 @@ const initialMeetings: Meeting[] = [
         id: '301',
         description: 'Schedule photoshoot for new products',
         assignee: 'Jane Smith',
-        completed: false
+        completed: false,
+        createdAt: '2023-10-12'
       },
       {
         id: '302',
         description: 'Review analytics report',
         assignee: 'John Doe',
-        completed: true
+        completed: true,
+        createdAt: '2023-10-10'
+      },
+      {
+        id: '303',
+        description: 'Prepare content calendar for November',
+        assignee: 'Current User',
+        completed: false,
+        createdAt: '2023-10-25'
       }
     ],
     issues: [
@@ -113,13 +143,22 @@ const initialMeetings: Meeting[] = [
         id: '401',
         description: 'Website traffic declining on product pages',
         reporter: 'Jane Smith',
-        category: 'Marketing'
+        category: 'Marketing',
+        createdAt: '2023-10-08'
       },
       {
         id: '402',
         description: 'Need more budget for paid advertising',
         reporter: 'John Doe',
-        category: 'Finance'
+        category: 'Finance',
+        createdAt: '2023-10-05'
+      },
+      {
+        id: '403',
+        description: 'Competitor launched similar campaign',
+        reporter: 'Current User',
+        category: 'Competition',
+        createdAt: '2023-11-01'
       }
     ],
     conclusion: '',
@@ -134,56 +173,91 @@ const initialMeetings: Meeting[] = [
     duration: '90 min',
     rocks: [
       {
-        id: '103',
+        id: '104',
         description: 'Implement new CRM system',
         owner: 'Alex Johnson',
-        status: 'on-track'
+        status: 'on-track',
+        createdAt: '2023-09-15'
       },
       {
-        id: '104',
+        id: '105',
         description: 'Hire two new sales representatives',
         owner: 'Sarah Williams',
-        status: 'on-track'
+        status: 'on-track',
+        createdAt: '2023-09-10'
+      },
+      {
+        id: '106',
+        description: 'Develop sales training program',
+        owner: 'Current User',
+        status: 'off-track',
+        createdAt: '2023-10-01'
       }
     ],
     headlines: [
       {
-        id: '203',
+        id: '204',
         content: 'Closed largest deal of the quarter',
-        reporter: 'Alex Johnson'
+        reporter: 'Alex Johnson',
+        createdAt: '2023-10-12'
       },
       {
-        id: '204',
+        id: '205',
         content: 'Sales team exceeded monthly quota by 15%',
-        reporter: 'Sarah Williams'
+        reporter: 'Sarah Williams',
+        createdAt: '2023-10-30'
+      },
+      {
+        id: '206',
+        content: 'New territory expansion approved',
+        reporter: 'Current User',
+        createdAt: '2023-11-02'
       }
     ],
     todos: [
       {
-        id: '303',
+        id: '304',
         description: 'Update sales pitch deck',
         assignee: 'Alex Johnson',
-        completed: false
+        completed: false,
+        createdAt: '2023-10-05'
       },
       {
-        id: '304',
+        id: '305',
         description: 'Schedule training for new sales hires',
         assignee: 'Sarah Williams',
-        completed: false
+        completed: false,
+        createdAt: '2023-10-15'
+      },
+      {
+        id: '306',
+        description: 'Create proposal for enterprise client',
+        assignee: 'Current User',
+        completed: true,
+        createdAt: '2023-10-20'
       }
     ],
     issues: [
       {
-        id: '403',
+        id: '404',
         description: 'Long sales cycle for enterprise clients',
         reporter: 'Alex Johnson',
-        category: 'Sales Process'
+        category: 'Sales Process',
+        createdAt: '2023-09-28'
       },
       {
-        id: '404',
+        id: '405',
         description: 'Need updated competitive analysis',
         reporter: 'Sarah Williams',
-        category: 'Market Research'
+        category: 'Market Research',
+        createdAt: '2023-10-10'
+      },
+      {
+        id: '406',
+        description: 'Pricing concerns from multiple prospects',
+        reporter: 'Current User',
+        category: 'Pricing',
+        createdAt: '2023-10-25'
       }
     ],
     conclusion: '',
@@ -198,56 +272,91 @@ const initialMeetings: Meeting[] = [
     duration: '90 min',
     rocks: [
       {
-        id: '105',
+        id: '107',
         description: 'Finalize 5-year strategic plan',
         owner: 'Michael Roberts',
-        status: 'off-track'
+        status: 'off-track',
+        createdAt: '2023-08-15'
       },
       {
-        id: '106',
+        id: '108',
         description: 'Complete Q4 budget allocation',
         owner: 'Lisa Chen',
-        status: 'on-track'
+        status: 'on-track',
+        createdAt: '2023-09-20'
+      },
+      {
+        id: '109',
+        description: 'Prepare annual shareholder presentation',
+        owner: 'Current User',
+        status: 'completed',
+        createdAt: '2023-10-05'
       }
     ],
     headlines: [
       {
-        id: '205',
+        id: '207',
         content: 'New partnership agreement signed with key vendor',
-        reporter: 'Michael Roberts'
+        reporter: 'Michael Roberts',
+        createdAt: '2023-10-28'
       },
       {
-        id: '206',
+        id: '208',
         content: 'Company featured in industry publication',
-        reporter: 'Lisa Chen'
+        reporter: 'Lisa Chen',
+        createdAt: '2023-11-01'
+      },
+      {
+        id: '209',
+        content: 'Q3 financial results exceed expectations',
+        reporter: 'Current User',
+        createdAt: '2023-10-15'
       }
     ],
     todos: [
       {
-        id: '305',
+        id: '307',
         description: 'Schedule board meeting',
         assignee: 'Michael Roberts',
-        completed: true
+        completed: true,
+        createdAt: '2023-10-01'
       },
       {
-        id: '306',
+        id: '308',
         description: 'Review quarterly financial statements',
         assignee: 'Lisa Chen',
-        completed: false
+        completed: false,
+        createdAt: '2023-10-10'
+      },
+      {
+        id: '309',
+        description: 'Finalize executive compensation plan',
+        assignee: 'Current User',
+        completed: false,
+        createdAt: '2023-10-20'
       }
     ],
     issues: [
       {
-        id: '405',
+        id: '407',
         description: 'Rising operations costs impacting margins',
         reporter: 'Michael Roberts',
-        category: 'Finance'
+        category: 'Finance',
+        createdAt: '2023-09-15'
       },
       {
-        id: '406',
+        id: '408',
         description: 'Need to improve employee retention',
         reporter: 'Lisa Chen',
-        category: 'HR'
+        category: 'HR',
+        createdAt: '2023-10-05'
+      },
+      {
+        id: '409',
+        description: 'Supply chain disruptions affecting delivery',
+        reporter: 'Current User',
+        category: 'Operations',
+        createdAt: '2023-10-12'
       }
     ],
     conclusion: '',

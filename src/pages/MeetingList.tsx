@@ -5,6 +5,7 @@ import { Meeting, useMeetingContext } from "@/store/meetingContext";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Check, Clock, AlertCircle } from "lucide-react";
 import { Link } from "react-router-dom";
+import { format } from "date-fns";
 
 const MeetingList = () => {
   const { meetings, currentUser } = useMeetingContext();
@@ -39,6 +40,15 @@ const MeetingList = () => {
     meeting.issues.filter(issue => issue.reporter === currentUser.name)
       .map(issue => ({ ...issue, meetingId: meeting.id, meetingName: meeting.name }))
   );
+
+  // Format date function
+  const formatDate = (dateString: string) => {
+    try {
+      return format(new Date(dateString), 'MMM d, yyyy');
+    } catch (e) {
+      return dateString;
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -76,7 +86,10 @@ const MeetingList = () => {
                             <Link to={`/meeting/${rock.meetingId}`} className="font-medium hover:text-eos-blue">
                               {rock.description}
                             </Link>
-                            <p className="text-xs text-eos-gray">{rock.meetingName}</p>
+                            <div className="flex items-center justify-between text-xs text-eos-gray">
+                              <span>{rock.meetingName}</span>
+                              <span className="ml-2">Created: {formatDate(rock.createdAt)}</span>
+                            </div>
                           </div>
                         </li>
                       ))}
@@ -106,7 +119,10 @@ const MeetingList = () => {
                             <Link to={`/meeting/${todo.meetingId}`} className="font-medium hover:text-eos-blue">
                               {todo.description}
                             </Link>
-                            <p className="text-xs text-eos-gray">{todo.meetingName}</p>
+                            <div className="flex items-center justify-between text-xs text-eos-gray">
+                              <span>{todo.meetingName}</span>
+                              <span className="ml-2">Created: {formatDate(todo.createdAt)}</span>
+                            </div>
                           </div>
                         </li>
                       ))}
@@ -130,7 +146,10 @@ const MeetingList = () => {
                           <Link to={`/meeting/${headline.meetingId}`} className="font-medium hover:text-eos-blue">
                             {headline.content}
                           </Link>
-                          <p className="text-xs text-eos-gray">{headline.meetingName}</p>
+                          <div className="flex items-center justify-between text-xs text-eos-gray">
+                            <span>{headline.meetingName}</span>
+                            <span className="ml-2">Created: {formatDate(headline.createdAt)}</span>
+                          </div>
                         </li>
                       ))}
                     </ul>
@@ -153,7 +172,10 @@ const MeetingList = () => {
                           <Link to={`/meeting/${issue.meetingId}`} className="font-medium hover:text-eos-blue">
                             {issue.description}
                           </Link>
-                          <p className="text-xs text-eos-gray">{issue.meetingName} • {issue.category}</p>
+                          <div className="flex items-center justify-between text-xs text-eos-gray">
+                            <span>{issue.meetingName} • {issue.category}</span>
+                            <span className="ml-2">Created: {formatDate(issue.createdAt)}</span>
+                          </div>
                         </li>
                       ))}
                     </ul>
