@@ -1,4 +1,3 @@
-
 import Header from "@/components/Header";
 import MeetingCard from "@/components/MeetingCard";
 import { Meeting, useMeetingContext } from "@/store/meetingContext";
@@ -187,7 +186,7 @@ const MeetingList = () => {
           
           {/* Meetings Section */}
           <div className="lg:w-1/2">
-            <h2 className="text-2xl font-bold text-eos-blue mb-6">Your EOS Level 10 Meetings</h2>
+            <h2 className="text-2xl font-bold text-eos-blue mb-6">My Meetings</h2>
             
             {userMeetings.length === 0 ? (
               <div className="text-center py-10">
