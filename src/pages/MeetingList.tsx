@@ -13,22 +13,10 @@ const MeetingList = () => {
   const userMeetings = meetings.filter(meeting => 
     meeting.members.includes(currentUser.name)
   );
-
-  // Group meetings by day of week
-  const meetingsByDay: Record<string, Meeting[]> = userMeetings.reduce((acc, meeting) => {
-    if (!acc[meeting.dayOfWeek]) {
-      acc[meeting.dayOfWeek] = [];
-    }
-    acc[meeting.dayOfWeek].push(meeting);
-    return acc;
-  }, {} as Record<string, Meeting[]>);
-
-  // Order of days
-  const daysOrder = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   
-  // Sort the days
-  const sortedDays = Object.keys(meetingsByDay).sort(
-    (a, b) => daysOrder.indexOf(a) - daysOrder.indexOf(b)
+  // Sort meetings by title
+  const sortedMeetings = [...userMeetings].sort((a, b) => 
+    a.name.localeCompare(b.name)
   );
 
   // Collect personal items from all meetings
@@ -184,16 +172,9 @@ const MeetingList = () => {
                 <p className="text-eos-gray">You don't have any meetings yet.</p>
               </div>
             ) : (
-              <div className="space-y-8">
-                {sortedDays.map(day => (
-                  <div key={day} className="animate-fade-in">
-                    <h3 className="text-lg font-medium text-eos-gray mb-3">{day}</h3>
-                    <div className="grid grid-cols-1 gap-4">
-                      {meetingsByDay[day].map(meeting => (
-                        <MeetingCard key={meeting.id} meeting={meeting} />
-                      ))}
-                    </div>
-                  </div>
+              <div className="grid grid-cols-1 gap-4">
+                {sortedMeetings.map(meeting => (
+                  <MeetingCard key={meeting.id} meeting={meeting} />
                 ))}
               </div>
             )}
