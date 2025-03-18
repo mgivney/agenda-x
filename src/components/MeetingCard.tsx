@@ -1,6 +1,6 @@
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Meeting } from "@/store/meetingStore";
+import { Meeting } from "@/store/meetingContext";
 import { Calendar, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
 
