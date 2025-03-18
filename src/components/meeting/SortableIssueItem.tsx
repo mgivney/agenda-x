@@ -33,6 +33,7 @@ const SortableIssueItem = ({ issue, index, meetingId }: SortableIssueItemProps) 
     setNodeRef,
     transform,
     transition,
+    isDragging
   } = useSortable({ id: issue.id });
   
   const [isExpanded, setIsExpanded] = useState(false);
@@ -43,6 +44,8 @@ const SortableIssueItem = ({ issue, index, meetingId }: SortableIssueItemProps) 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 1 : 0,
   };
 
   const handleResolveIssue = () => {
@@ -66,7 +69,7 @@ const SortableIssueItem = ({ issue, index, meetingId }: SortableIssueItemProps) 
   return (
     <div className="mb-4">
       <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
-        <Card ref={setNodeRef} style={style}>
+        <Card ref={setNodeRef} style={style} className="relative">
           <CardContent className="p-4">
             <div className="flex items-start gap-2">
               <div 

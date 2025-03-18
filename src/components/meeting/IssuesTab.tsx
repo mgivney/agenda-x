@@ -34,7 +34,12 @@ const IssuesTab = ({ issues, meetingId, onAddIssue, onReorderIssues }: IssuesTab
   const activeIssues = issues.filter(issue => !issue.resolved);
   
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      // Decrease the activation constraint to make dragging more responsive
+      activationConstraint: {
+        distance: 5, // Reduced from default
+      }
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
@@ -47,12 +52,15 @@ const IssuesTab = ({ issues, meetingId, onAddIssue, onReorderIssues }: IssuesTab
       const oldIndex = activeIssues.findIndex(issue => issue.id === active.id);
       const newIndex = activeIssues.findIndex(issue => issue.id === over.id);
       
-      onReorderIssues(oldIndex, newIndex);
-      
-      toast({
-        title: "Success",
-        description: "Issues reordered successfully.",
-      });
+      // Only proceed if both indices are valid
+      if (oldIndex !== -1 && newIndex !== -1) {
+        onReorderIssues(oldIndex, newIndex);
+        
+        toast({
+          title: "Success",
+          description: "Issues reordered successfully.",
+        });
+      }
     }
   };
 
