@@ -32,6 +32,11 @@ export interface Issue {
   createdAt: string; // Add creation date
 }
 
+export interface Message {
+  content: string;
+  timestamp: string;
+}
+
 export interface Meeting {
   id: string;
   name: string;
@@ -45,6 +50,8 @@ export interface Meeting {
   issues: Issue[];
   conclusion: string;
   members: string[];
+  memberRatings?: Record<string, number>;
+  messages?: Message[];
 }
 
 interface MeetingContextType {
@@ -61,6 +68,8 @@ interface MeetingContextType {
   updateRockStatus: (meetingId: string, rockId: string, status: Rock['status']) => void;
   addIssue: (meetingId: string, issue: Omit<Issue, 'id'>) => void;
   addHeadline: (meetingId: string, headline: Omit<Headline, 'id'>) => void;
+  updateMemberRating: (meetingId: string, member: string, rating: number) => void;
+  sendMessage: (meetingId: string, content: string) => void;
 }
 
 // Initial data
@@ -443,6 +452,34 @@ export const MeetingProvider: React.FC<{children: ReactNode}> = ({ children }) =
     ));
   };
 
+  const updateMemberRating = (meetingId: string, member: string, rating: number) => {
+    setMeetings(meetings.map(meeting => 
+      meeting.id === meetingId 
+        ? { 
+            ...meeting, 
+            memberRatings: {
+              ...(meeting.memberRatings || {}),
+              [member]: rating
+            }
+          } 
+        : meeting
+    ));
+  };
+
+  const sendMessage = (meetingId: string, content: string) => {
+    setMeetings(meetings.map(meeting => 
+      meeting.id === meetingId 
+        ? { 
+            ...meeting, 
+            messages: [
+              ...(meeting.messages || []),
+              { content, timestamp: new Date().toISOString() }
+            ]
+          } 
+        : meeting
+    ));
+  };
+
   return (
     <MeetingContext.Provider 
       value={{ 
@@ -455,7 +492,9 @@ export const MeetingProvider: React.FC<{children: ReactNode}> = ({ children }) =
         updateTodoStatus,
         updateRockStatus,
         addIssue,
-        addHeadline
+        addHeadline,
+        updateMemberRating,
+        sendMessage
       }}
     >
       {children}

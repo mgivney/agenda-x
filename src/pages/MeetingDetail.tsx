@@ -11,9 +11,18 @@ import {
   Meeting, 
   useMeetingContext
 } from "@/store/meetingContext";
-import { CheckCircle, Circle, Clock, Plus, XCircle } from "lucide-react";
+import { CheckCircle, Circle, Clock, MessageSquare, Plus, Send, Star, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
 
 const MeetingDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -21,10 +30,14 @@ const MeetingDetail = () => {
     meetings, 
     updateMeetingConclusion,
     updateRockStatus,
-    updateTodoStatus
+    updateTodoStatus,
+    updateMemberRating,
+    sendMessage
   } = useMeetingContext();
   const [meeting, setMeeting] = useState<Meeting | null>(null);
   const [conclusion, setConclusion] = useState("");
+  const [memberRatings, setMemberRatings] = useState<Record<string, number>>({});
+  const [message, setMessage] = useState("");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -33,6 +46,13 @@ const MeetingDetail = () => {
       if (foundMeeting) {
         setMeeting(foundMeeting);
         setConclusion(foundMeeting.conclusion);
+        
+        // Initialize member ratings from meeting data or default to 5
+        const initialRatings: Record<string, number> = {};
+        foundMeeting.members.forEach(member => {
+          initialRatings[member] = foundMeeting.memberRatings?.[member] || 5;
+        });
+        setMemberRatings(initialRatings);
       }
     }
   }, [id, meetings]);
@@ -47,6 +67,31 @@ const MeetingDetail = () => {
       toast({
         title: "Success",
         description: "Meeting conclusion has been saved.",
+      });
+    }
+  };
+
+  const handleRatingChange = (member: string, newRating: number) => {
+    if (newRating < 1) newRating = 1;
+    if (newRating > 10) newRating = 10;
+    
+    setMemberRatings(prev => ({
+      ...prev,
+      [member]: newRating
+    }));
+    
+    if (id) {
+      updateMemberRating(id, member, newRating);
+    }
+  };
+
+  const handleSendMessage = () => {
+    if (id && message.trim()) {
+      sendMessage(id, message);
+      setMessage("");
+      toast({
+        title: "Message Sent",
+        description: "Your message has been sent to the team.",
       });
     }
   };
@@ -268,17 +313,97 @@ const MeetingDetail = () => {
           <TabsContent value="conclusion">
             <Card>
               <CardHeader>
-                <CardTitle>Meeting Conclusion</CardTitle>
+                <CardTitle>Member Ratings (1-10)</CardTitle>
               </CardHeader>
-              <CardContent>
-                <Textarea
-                  placeholder="Enter meeting conclusion and key takeaways..."
-                  className="min-h-[200px]"
-                  value={conclusion}
-                  onChange={handleConclusionChange}
-                />
-                <div className="flex justify-end mt-4">
-                  <Button onClick={saveConclusion}>Save Conclusion</Button>
+              <CardContent className="space-y-4">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Member</TableHead>
+                      <TableHead>Rating</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {meeting.members.map(member => (
+                      <TableRow key={member}>
+                        <TableCell className="font-medium">{member}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            {[...Array(memberRatings[member] || 0)].map((_, i) => (
+                              <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                            ))}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => handleRatingChange(member, (memberRatings[member] || 5) - 1)}
+                            >
+                              -
+                            </Button>
+                            <span className="w-8 text-center">{memberRatings[member] || 5}</span>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => handleRatingChange(member, (memberRatings[member] || 5) + 1)}
+                            >
+                              +
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+
+                <Separator className="my-4" />
+                
+                <div>
+                  <h3 className="text-lg font-medium mb-2">Meeting Notes</h3>
+                  <Textarea
+                    placeholder="Enter meeting conclusion and key takeaways..."
+                    className="min-h-[100px]"
+                    value={conclusion}
+                    onChange={handleConclusionChange}
+                  />
+                  <div className="flex justify-end mt-2">
+                    <Button onClick={saveConclusion}>Save Notes</Button>
+                  </div>
+                </div>
+
+                <Separator className="my-4" />
+                
+                <div>
+                  <h3 className="text-lg font-medium mb-2 flex items-center">
+                    <MessageSquare size={18} className="mr-1" /> Team Messaging
+                  </h3>
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Message to send to team..."
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      className="flex-1"
+                    />
+                    <Button onClick={handleSendMessage}>
+                      <Send size={16} className="mr-1" /> Send
+                    </Button>
+                  </div>
+                  
+                  {meeting.messages && meeting.messages.length > 0 ? (
+                    <div className="mt-4 space-y-2">
+                      {meeting.messages.map((msg, index) => (
+                        <div key={index} className="bg-gray-50 p-3 rounded-md">
+                          <p className="text-sm text-gray-500">{new Date(msg.timestamp).toLocaleString()}</p>
+                          <p>{msg.content}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500 mt-2">No messages sent yet</p>
+                  )}
                 </div>
               </CardContent>
             </Card>
