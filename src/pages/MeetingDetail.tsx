@@ -1,4 +1,3 @@
-
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -56,7 +55,7 @@ const SortableIssueItem = ({ issue, index }: { issue: any, index: number }) => {
   };
 
   return (
-    <Card key={issue.id} ref={setNodeRef} style={style} className="mb-3">
+    <Card key={issue.id} ref={setNodeRef} style={style} className="mb-4">
       <CardContent className="p-4">
         <div className="flex items-start gap-2">
           <div 
@@ -367,7 +366,7 @@ const MeetingDetail = () => {
                 </CardContent>
               </Card>
             ) : (
-              <div className="space-y-0">
+              <div>
                 <DndContext
                   sensors={sensors}
                   collisionDetection={closestCenter}
