@@ -69,9 +69,9 @@ interface MeetingContextType {
   addHeadline: (meetingId: string, headline: Omit<Headline, 'id'>) => void;
   updateMemberRating: (meetingId: string, member: string, rating: number) => void;
   sendMessage: (meetingId: string, content: string) => void;
+  reorderIssues: (meetingId: string, oldIndex: number, newIndex: number) => void;
 }
 
-// Initial data
 const initialMeetings: Meeting[] = [
   {
     id: '1',
@@ -479,6 +479,22 @@ export const MeetingProvider: React.FC<{children: ReactNode}> = ({ children }) =
     ));
   };
 
+  const reorderIssues = (meetingId: string, oldIndex: number, newIndex: number) => {
+    setMeetings(meetings.map(meeting => {
+      if (meeting.id === meetingId) {
+        const newIssues = [...meeting.issues];
+        const [movedIssue] = newIssues.splice(oldIndex, 1);
+        newIssues.splice(newIndex, 0, movedIssue);
+        
+        return {
+          ...meeting,
+          issues: newIssues
+        };
+      }
+      return meeting;
+    }));
+  };
+
   return (
     <MeetingContext.Provider 
       value={{ 
@@ -493,7 +509,8 @@ export const MeetingProvider: React.FC<{children: ReactNode}> = ({ children }) =
         addIssue,
         addHeadline,
         updateMemberRating,
-        sendMessage
+        sendMessage,
+        reorderIssues
       }}
     >
       {children}

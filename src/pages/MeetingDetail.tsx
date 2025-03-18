@@ -11,7 +11,7 @@ import {
   Meeting, 
   useMeetingContext
 } from "@/store/meetingContext";
-import { CheckCircle, Circle, Clock, Plus, Star, XCircle } from "lucide-react";
+import { CheckCircle, Circle, Clock, GripVertical, Plus, Star, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { 
@@ -22,6 +22,64 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+
+// Sortable Issue Item Component
+const SortableIssueItem = ({ issue, index }: { issue: any, index: number }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+  } = useSortable({ id: issue.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <Card key={issue.id} ref={setNodeRef} style={style} className="mb-3">
+      <CardContent className="p-4">
+        <div className="flex items-start gap-2">
+          <div 
+            className="cursor-grab p-1 mt-1 text-gray-400 hover:text-gray-600 transition-colors"
+            {...attributes}
+            {...listeners}
+          >
+            <GripVertical size={16} />
+          </div>
+          <div className="flex-1">
+            <div className="flex justify-between">
+              <h4 className="font-medium">{issue.description}</h4>
+              <span className="text-xs bg-eos-lightGray px-2 py-1 rounded-full text-eos-gray">
+                {issue.category}
+              </span>
+            </div>
+            <p className="text-sm text-eos-gray">Reported by: {issue.reporter}</p>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
 
 const MeetingDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -30,12 +88,21 @@ const MeetingDetail = () => {
     updateMeetingConclusion,
     updateRockStatus,
     updateTodoStatus,
-    updateMemberRating
+    updateMemberRating,
+    reorderIssues
   } = useMeetingContext();
   const [meeting, setMeeting] = useState<Meeting | null>(null);
   const [conclusion, setConclusion] = useState("");
   const [memberRatings, setMemberRatings] = useState<Record<string, number>>({});
   const { toast } = useToast();
+  
+  // Setup DnD sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   useEffect(() => {
     if (id) {
@@ -97,6 +164,24 @@ const MeetingDetail = () => {
   const handleRockStatusChange = (rockId: string, status: 'on-track' | 'off-track' | 'completed') => {
     if (id) {
       updateRockStatus(id, rockId, status);
+    }
+  };
+
+  // Handle drag end for issue reordering
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    
+    if (over && active.id !== over.id && meeting) {
+      const oldIndex = meeting.issues.findIndex(issue => issue.id === active.id);
+      const newIndex = meeting.issues.findIndex(issue => issue.id === over.id);
+      
+      if (id) {
+        reorderIssues(id, oldIndex, newIndex);
+        toast({
+          title: "Success",
+          description: "Issues reordered successfully.",
+        });
+      }
     }
   };
 
@@ -282,22 +367,21 @@ const MeetingDetail = () => {
                 </CardContent>
               </Card>
             ) : (
-              <div className="space-y-3">
-                {meeting.issues.map(issue => (
-                  <Card key={issue.id}>
-                    <CardContent className="p-4">
-                      <div>
-                        <div className="flex justify-between">
-                          <h4 className="font-medium">{issue.description}</h4>
-                          <span className="text-xs bg-eos-lightGray px-2 py-1 rounded-full text-eos-gray">
-                            {issue.category}
-                          </span>
-                        </div>
-                        <p className="text-sm text-eos-gray">Reported by: {issue.reporter}</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+              <div className="space-y-0">
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleDragEnd}
+                >
+                  <SortableContext
+                    items={meeting.issues.map(issue => issue.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    {meeting.issues.map((issue, index) => (
+                      <SortableIssueItem key={issue.id} issue={issue} index={index} />
+                    ))}
+                  </SortableContext>
+                </DndContext>
               </div>
             )}
           </TabsContent>
