@@ -1,3 +1,4 @@
+
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -78,6 +79,13 @@ const MeetingDetail = () => {
     if (id) {
       updateMemberRating(id, member, newRating);
     }
+  };
+
+  const calculateAverageRating = (): number => {
+    if (!meeting || Object.keys(memberRatings).length === 0) return 0;
+    
+    const sum = Object.values(memberRatings).reduce((acc, rating) => acc + rating, 0);
+    return parseFloat((sum / Object.values(memberRatings).length).toFixed(1));
   };
 
   const handleTodoStatusChange = (todoId: string, checked: boolean) => {
@@ -328,6 +336,21 @@ const MeetingDetail = () => {
                       </div>
                     </div>
                   ))}
+                </div>
+                
+                {/* Average Rating Display */}
+                <div className="bg-gray-50 p-4 rounded-md">
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-gray-700">Average Rating:</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl font-bold">{calculateAverageRating()}</span>
+                      <div className="flex items-center">
+                        {[...Array(Math.round(calculateAverageRating()))].map((_, i) => (
+                          <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <Separator className="my-4" />
