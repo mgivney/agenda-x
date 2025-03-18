@@ -52,7 +52,7 @@ const MeetingList = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header title="Entrepeneur Chronicle" />
+      <Header title="AgendaX" />
       
       <div className="container max-w-6xl mx-auto py-6 px-4">
         <div className="flex flex-col lg:flex-row gap-6">
