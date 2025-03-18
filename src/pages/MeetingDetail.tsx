@@ -10,7 +10,7 @@ import {
   Meeting, 
   useMeetingContext
 } from "@/store/meetingContext";
-import { CheckCircle, Circle, Clock, MessageSquare, Plus, Send, Star, XCircle } from "lucide-react";
+import { CheckCircle, Circle, Clock, Plus, Star, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { 
@@ -21,7 +21,6 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
 
 const MeetingDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -30,13 +29,11 @@ const MeetingDetail = () => {
     updateMeetingConclusion,
     updateRockStatus,
     updateTodoStatus,
-    updateMemberRating,
-    sendMessage
+    updateMemberRating
   } = useMeetingContext();
   const [meeting, setMeeting] = useState<Meeting | null>(null);
   const [conclusion, setConclusion] = useState("");
   const [memberRatings, setMemberRatings] = useState<Record<string, number>>({});
-  const [message, setMessage] = useState("");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -83,17 +80,6 @@ const MeetingDetail = () => {
     }
   };
 
-  const handleSendMessage = () => {
-    if (id && message.trim()) {
-      sendMessage(id, message);
-      setMessage("");
-      toast({
-        title: "Message Sent",
-        description: "Your message has been sent to the team.",
-      });
-    }
-  };
-
   const handleTodoStatusChange = (todoId: string, checked: boolean) => {
     if (id) {
       updateTodoStatus(id, todoId, checked);
@@ -119,18 +105,18 @@ const MeetingDetail = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header title={meeting.name} showBackButton />
+      <Header title={meeting?.name || ""} showBackButton />
       
       <div className="container max-w-4xl mx-auto py-6 px-4">
         <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
           <div className="flex justify-between items-start">
             <div>
-              <h2 className="text-2xl font-bold text-eos-blue">{meeting.name}</h2>
-              <p className="text-eos-gray">{meeting.description || "No description provided"}</p>
+              <h2 className="text-2xl font-bold text-eos-blue">{meeting?.name}</h2>
+              <p className="text-eos-gray">{meeting?.description || "No description provided"}</p>
             </div>
             <div className="flex items-center text-eos-gray">
               <Clock size={16} className="mr-2" />
-              <span>{meeting.dayOfWeek} at {meeting.time} ({meeting.duration})</span>
+              <span>{meeting?.dayOfWeek} at {meeting?.time} ({meeting?.duration})</span>
             </div>
           </div>
         </div>
@@ -314,48 +300,34 @@ const MeetingDetail = () => {
                 <CardTitle>Meeting Ratings</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        {meeting.members.map(member => (
-                          <TableHead key={member}>{member}</TableHead>
+                <div className="space-y-4">
+                  {meeting?.members.map(member => (
+                    <div key={member} className="flex items-center gap-4">
+                      <div className="w-1/3 font-medium">{member}</div>
+                      <div className="flex items-center gap-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleRatingChange(member, (memberRatings[member] || 5) - 1)}
+                        >
+                          -
+                        </Button>
+                        <span className="w-8 text-center">{memberRatings[member] || 5}</span>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleRatingChange(member, (memberRatings[member] || 5) + 1)}
+                        >
+                          +
+                        </Button>
+                      </div>
+                      <div className="flex items-center">
+                        {[...Array(memberRatings[member] || 0)].map((_, i) => (
+                          <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                         ))}
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      <TableRow>
-                        {meeting.members.map(member => (
-                          <TableCell key={member}>
-                            <div className="flex flex-col items-center gap-1">
-                              <div className="flex items-center">
-                                {[...Array(memberRatings[member] || 0)].map((_, i) => (
-                                  <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                                ))}
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <Button 
-                                  variant="outline" 
-                                  size="sm"
-                                  onClick={() => handleRatingChange(member, (memberRatings[member] || 5) - 1)}
-                                >
-                                  -
-                                </Button>
-                                <span className="w-8 text-center">{memberRatings[member] || 5}</span>
-                                <Button 
-                                  variant="outline" 
-                                  size="sm"
-                                  onClick={() => handleRatingChange(member, (memberRatings[member] || 5) + 1)}
-                                >
-                                  +
-                                </Button>
-                              </div>
-                            </div>
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    </TableBody>
-                  </Table>
+                      </div>
+                    </div>
+                  ))}
                 </div>
 
                 <Separator className="my-4" />
@@ -371,38 +343,6 @@ const MeetingDetail = () => {
                   <div className="flex justify-end mt-2">
                     <Button onClick={saveConclusion}>Save Notes</Button>
                   </div>
-                </div>
-
-                <Separator className="my-4" />
-                
-                <div>
-                  <h3 className="text-lg font-medium mb-2 flex items-center">
-                    <MessageSquare size={18} className="mr-1" /> Team Messaging
-                  </h3>
-                  <div className="flex gap-2">
-                    <Input
-                      placeholder="Message to send to team..."
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      className="flex-1"
-                    />
-                    <Button onClick={handleSendMessage}>
-                      <Send size={16} className="mr-1" /> Send
-                    </Button>
-                  </div>
-                  
-                  {meeting.messages && meeting.messages.length > 0 ? (
-                    <div className="mt-4 space-y-2">
-                      {meeting.messages.map((msg, index) => (
-                        <div key={index} className="bg-gray-50 p-3 rounded-md">
-                          <p className="text-sm text-gray-500">{new Date(msg.timestamp).toLocaleString()}</p>
-                          <p>{msg.content}</p>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-gray-500 mt-2">No messages sent yet</p>
-                  )}
                 </div>
               </CardContent>
             </Card>

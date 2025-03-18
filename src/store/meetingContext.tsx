@@ -6,14 +6,14 @@ export interface Todo {
   description: string;
   assignee: string;
   completed: boolean;
-  createdAt: string; // Add creation date
+  createdAt: string;
 }
 
 export interface Headline {
   id: string;
   content: string;
   reporter: string;
-  createdAt: string; // Add creation date
+  createdAt: string;
 }
 
 export interface Rock {
@@ -21,7 +21,7 @@ export interface Rock {
   description: string;
   owner: string;
   status: 'on-track' | 'off-track' | 'completed';
-  createdAt: string; // Add creation date
+  createdAt: string;
 }
 
 export interface Issue {
@@ -29,7 +29,7 @@ export interface Issue {
   description: string;
   reporter: string;
   category: string;
-  createdAt: string; // Add creation date
+  createdAt: string;
 }
 
 export interface Message {
