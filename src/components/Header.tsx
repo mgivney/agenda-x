@@ -1,7 +1,15 @@
 
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, LogOut, Settings, Plus, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface HeaderProps {
   title: string;
@@ -27,7 +35,32 @@ const Header = ({ title, showBackButton = false }: HeaderProps) => {
         <h1 className="text-xl font-bold">{title}</h1>
       </div>
       <div>
-        <span className="text-sm font-medium">EOS Meeting Tracker</span>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+              <Avatar className="h-9 w-9 bg-eos-lightBlue/40 text-white">
+                <AvatarFallback>
+                  <User size={16} />
+                </AvatarFallback>
+              </Avatar>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-48" align="end">
+            <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/create-meeting")}>
+              <Plus className="mr-2 h-4 w-4" />
+              <span>Create Meeting</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/settings")}>
+              <Settings className="mr-2 h-4 w-4" />
+              <span>Settings</span>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="cursor-pointer text-red-600 focus:text-red-600" onClick={() => console.log("Logged out")}>
+              <LogOut className="mr-2 h-4 w-4" />
+              <span>Logout</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );
