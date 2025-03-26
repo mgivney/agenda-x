@@ -20,7 +20,10 @@ const MeetingDetail = () => {
     updateRockStatus,
     updateTodoStatus,
     updateMemberRating,
-    reorderIssues
+    reorderIssues,
+    addTodo,
+    addHeadline,
+    addIssue
   } = useMeetingContext();
   const [meeting, setMeeting] = useState<Meeting | null>(null);
   const [conclusion, setConclusion] = useState("");
@@ -89,6 +92,41 @@ const MeetingDetail = () => {
     }
   };
 
+  const handleAddTodo = () => {
+    if (id && meeting) {
+      const newTodo = {
+        description: "New to-do item",
+        assignee: meeting.members[0],
+        completed: false,
+        createdAt: new Date().toISOString().split('T')[0]
+      };
+      addTodo(id, newTodo);
+    }
+  };
+
+  const handleAddHeadline = () => {
+    if (id && meeting) {
+      const newHeadline = {
+        content: "New headline",
+        reporter: meeting.members[0],
+        createdAt: new Date().toISOString().split('T')[0]
+      };
+      addHeadline(id, newHeadline);
+    }
+  };
+
+  const handleAddIssue = () => {
+    if (id && meeting) {
+      const newIssue = {
+        description: "New issue",
+        reporter: meeting.members[0],
+        category: "General",
+        createdAt: new Date().toISOString().split('T')[0]
+      };
+      addIssue(id, newIssue);
+    }
+  };
+
   if (!meeting) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -138,13 +176,15 @@ const MeetingDetail = () => {
           <TabsContent value="rocks">
             <RocksTab 
               rocks={meeting.rocks} 
-              onRockStatusChange={handleRockStatusChange} 
+              onRockStatusChange={handleRockStatusChange}
+              onAddRock={() => {}} 
             />
           </TabsContent>
           
           <TabsContent value="headlines">
             <HeadlinesTab 
-              headlines={meeting.headlines} 
+              headlines={meeting.headlines}
+              onAddHeadline={handleAddHeadline} 
             />
           </TabsContent>
           
@@ -152,6 +192,7 @@ const MeetingDetail = () => {
             <TodosTab 
               todos={meeting.todos} 
               onTodoStatusChange={handleTodoStatusChange}
+              onAddTodo={handleAddTodo}
             />
           </TabsContent>
           
@@ -160,6 +201,7 @@ const MeetingDetail = () => {
               issues={meeting.issues}
               meetingId={id || ""}
               onReorderIssues={handleReorderIssues}
+              onAddIssue={handleAddIssue}
             />
           </TabsContent>
           
