@@ -69,7 +69,7 @@ const IssuesTab = ({ issues, meetingId, onAddIssue, onReorderIssues }: IssuesTab
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium">Issues for IDS</h3>
+        <h3 className="text-lg font-medium">Issues</h3>
         <Button 
           size="sm" 
           variant="outline" 
