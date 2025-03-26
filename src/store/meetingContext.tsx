@@ -288,14 +288,14 @@ const initialMeetings: Meeting[] = [
         id: '107',
         description: 'Finalize 5-year strategic plan',
         owner: 'Michael Roberts',
-        status: 'off-track',
+        status: 'completed',
         createdAt: '2023-08-15'
       },
       {
         id: '108',
         description: 'Complete Q4 budget allocation',
         owner: 'Lisa Chen',
-        status: 'on-track',
+        status: 'completed',
         createdAt: '2023-09-20'
       },
       {
@@ -304,6 +304,116 @@ const initialMeetings: Meeting[] = [
         owner: 'You',
         status: 'completed',
         createdAt: '2023-10-05'
+      },
+      {
+        id: '110',
+        description: 'Launch employee wellness program',
+        owner: 'Lisa Chen',
+        status: 'completed',
+        createdAt: '2023-11-15'
+      },
+      {
+        id: '111',
+        description: 'Implement new cyber security measures',
+        owner: 'Michael Roberts',
+        status: 'completed',
+        createdAt: '2023-12-01'
+      }
+    ],
+    todos: [
+      {
+        id: '307',
+        description: 'Schedule board meeting',
+        assignee: 'Michael Roberts',
+        completed: true,
+        createdAt: '2023-10-01'
+      },
+      {
+        id: '308',
+        description: 'Review quarterly financial statements',
+        assignee: 'Lisa Chen',
+        completed: true,
+        createdAt: '2023-10-10'
+      },
+      {
+        id: '309',
+        description: 'Finalize executive compensation plan',
+        assignee: 'You',
+        completed: true,
+        createdAt: '2023-10-20'
+      },
+      {
+        id: '310',
+        description: 'Update risk assessment report',
+        assignee: 'Michael Roberts',
+        completed: true,
+        createdAt: '2023-11-05'
+      },
+      {
+        id: '311',
+        description: 'Prepare year-end performance reviews',
+        assignee: 'Lisa Chen',
+        completed: true,
+        createdAt: '2023-11-20'
+      },
+      {
+        id: '312',
+        description: 'Draft sustainability initiative proposal',
+        assignee: 'You',
+        completed: true,
+        createdAt: '2023-12-05'
+      }
+    ],
+    issues: [
+      {
+        id: '407',
+        description: 'Rising operations costs impacting margins',
+        reporter: 'Michael Roberts',
+        category: 'Finance',
+        createdAt: '2023-09-15',
+        resolved: true,
+        resolution: 'Implemented cost-saving measures across departments',
+        resolvedAt: '2023-10-15'
+      },
+      {
+        id: '408',
+        description: 'Need to improve employee retention',
+        reporter: 'Lisa Chen',
+        category: 'HR',
+        createdAt: '2023-10-05',
+        resolved: true,
+        resolution: 'Developed new employee benefits package',
+        resolvedAt: '2023-11-10'
+      },
+      {
+        id: '409',
+        description: 'Supply chain disruptions affecting delivery',
+        reporter: 'You',
+        category: 'Operations',
+        createdAt: '2023-10-12',
+        resolved: true,
+        resolution: 'Established partnerships with alternative suppliers',
+        resolvedAt: '2023-11-25'
+      },
+      {
+        id: '410',
+        description: 'Competitor launching similar product',
+        reporter: 'Michael Roberts',
+        category: 'Strategy',
+        createdAt: '2023-11-01',
+        resolved: true,
+        resolution: 'Accelerated product roadmap and enhanced features',
+        resolvedAt: '2023-12-01'
+      },
+      {
+        id: '411',
+        description: 'Data compliance requirements update needed',
+        reporter: 'Lisa Chen',
+        category: 'Legal',
+        createdAt: '2023-11-15',
+        resolved: true,
+        resolution: 'Updated policies and implemented new compliance tools',
+        resolvedAt: '2023-12-10'
       }
     ],
     headlines: [
@@ -324,52 +434,6 @@ const initialMeetings: Meeting[] = [
         content: 'Q3 financial results exceed expectations',
         reporter: 'You',
         createdAt: '2023-10-15'
-      }
-    ],
-    todos: [
-      {
-        id: '307',
-        description: 'Schedule board meeting',
-        assignee: 'Michael Roberts',
-        completed: true,
-        createdAt: '2023-10-01'
-      },
-      {
-        id: '308',
-        description: 'Review quarterly financial statements',
-        assignee: 'Lisa Chen',
-        completed: false,
-        createdAt: '2023-10-10'
-      },
-      {
-        id: '309',
-        description: 'Finalize executive compensation plan',
-        assignee: 'You',
-        completed: false,
-        createdAt: '2023-10-20'
-      }
-    ],
-    issues: [
-      {
-        id: '407',
-        description: 'Rising operations costs impacting margins',
-        reporter: 'Michael Roberts',
-        category: 'Finance',
-        createdAt: '2023-09-15'
-      },
-      {
-        id: '408',
-        description: 'Need to improve employee retention',
-        reporter: 'Lisa Chen',
-        category: 'HR',
-        createdAt: '2023-10-05'
-      },
-      {
-        id: '409',
-        description: 'Supply chain disruptions affecting delivery',
-        reporter: 'You',
-        category: 'Operations',
-        createdAt: '2023-10-12'
       }
     ],
     conclusion: '',
