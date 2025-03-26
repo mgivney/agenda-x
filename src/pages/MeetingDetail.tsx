@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import Header from "@/components/Header";
 import { Meeting, useMeetingContext } from "@/store/meetingContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,6 +10,7 @@ import HeadlinesTab from "@/components/meeting/HeadlinesTab";
 import TodosTab from "@/components/meeting/TodosTab";
 import IssuesTab from "@/components/meeting/IssuesTab";
 import ConclusionTab from "@/components/meeting/ConclusionTab";
+import { History } from "lucide-react";
 
 const MeetingDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -110,8 +111,17 @@ const MeetingDetail = () => {
               <h2 className="text-2xl font-bold text-eos-blue">{meeting?.name}</h2>
               <p className="text-eos-gray">{meeting?.description || "No description provided"}</p>
             </div>
-            <div className="flex items-center text-eos-gray">
-              <span>{meeting?.dayOfWeek} at {meeting?.time} ({meeting?.duration})</span>
+            <div className="flex flex-col items-end">
+              <div className="text-eos-gray mb-2">
+                <span>{meeting?.dayOfWeek} at {meeting?.time} ({meeting?.duration})</span>
+              </div>
+              <Link 
+                to={`/meeting/${id}/history`} 
+                className="flex items-center text-sm text-blue-500 hover:text-blue-700"
+              >
+                <History className="h-4 w-4 mr-1" />
+                View History
+              </Link>
             </div>
           </div>
         </div>
@@ -159,7 +169,7 @@ const MeetingDetail = () => {
               memberRatings={memberRatings}
               conclusion={conclusion}
               onMemberRatingChange={handleRatingChange}
-              onConclusionChange={(value: string) => setConclusion(value)}
+              onConclusionChange={handleConclusionChange}
               onSaveConclusion={saveConclusion}
             />
           </TabsContent>
