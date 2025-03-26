@@ -7,13 +7,20 @@ import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Calendar, Circle, CheckCircle2, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowLeft, Calendar, Circle, CheckCircle2, ChevronDown } from "lucide-react";
 import { 
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface HistoryItem {
   id: string;
@@ -38,6 +45,8 @@ const MeetingHistory = () => {
   const { meetings } = useMeetingContext();
   const [meeting, setMeeting] = useState<Meeting | null>(null);
   const [historyItems, setHistoryItems] = useState<GroupedHistoryItems>({});
+  const [selectedDate, setSelectedDate] = useState<string>("");
+  const [availableDates, setAvailableDates] = useState<string[]>([]);
 
   useEffect(() => {
     if (id) {
@@ -61,7 +70,7 @@ const MeetingHistory = () => {
               details: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
               status: todo.completed ? "Completed" : "Pending",
               createdAt: todo.createdAt,
-              completedAt: todo.completedAt || todo.createdAt
+              completedAt: todo.createdAt // Using createdAt as a fallback since completedAt doesn't exist
             });
           });
         
@@ -78,7 +87,7 @@ const MeetingHistory = () => {
               details: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
               status: rock.status,
               createdAt: rock.createdAt,
-              completedAt: rock.completedAt || rock.createdAt
+              completedAt: rock.createdAt // Using createdAt as a fallback since completedAt doesn't exist
             });
           });
         
@@ -112,13 +121,20 @@ const MeetingHistory = () => {
         
         // Sort dates in descending order
         const sortedGrouped: GroupedHistoryItems = {};
-        Object.keys(grouped)
-          .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
-          .forEach(date => {
-            sortedGrouped[date] = grouped[date];
-          });
+        const sortedDates = Object.keys(grouped)
+          .sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+          
+        sortedDates.forEach(date => {
+          sortedGrouped[date] = grouped[date];
+        });
         
         setHistoryItems(sortedGrouped);
+        setAvailableDates(sortedDates);
+        
+        // Set default selected date to the most recent one
+        if (sortedDates.length > 0) {
+          setSelectedDate(sortedDates[0]);
+        }
       }
     }
   }, [id, meetings]);
@@ -133,6 +149,11 @@ const MeetingHistory = () => {
       </div>
     );
   }
+
+  // Filter items by selected date, or show all if no date is selected
+  const filteredItems: GroupedHistoryItems = selectedDate
+    ? { [selectedDate]: historyItems[selectedDate] || [] }
+    : historyItems;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -150,14 +171,34 @@ const MeetingHistory = () => {
           </Link>
         </div>
         
-        {Object.keys(historyItems).length === 0 ? (
+        {availableDates.length > 0 && (
+          <div className="mb-6">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium">Filter by date:</span>
+              <Select value={selectedDate} onValueChange={setSelectedDate}>
+                <SelectTrigger className="w-[220px]">
+                  <SelectValue placeholder="Select a date" />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableDates.map((date) => (
+                    <SelectItem key={date} value={date}>
+                      {format(new Date(date), 'PPP')}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        )}
+        
+        {Object.keys(filteredItems).length === 0 ? (
           <Card>
             <CardContent className="text-center py-10">
               <p className="text-eos-gray">No completed items found for this meeting.</p>
             </CardContent>
           </Card>
         ) : (
-          Object.entries(historyItems).map(([date, items]) => (
+          Object.entries(filteredItems).map(([date, items]) => (
             <Card key={date} className="mb-6">
               <CardHeader className="pb-2">
                 <div className="flex items-center">
