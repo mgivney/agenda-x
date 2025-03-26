@@ -131,7 +131,7 @@ const MeetingDetail = () => {
             <TabsTrigger value="rocks">Rocks</TabsTrigger>
             <TabsTrigger value="headlines">Headlines</TabsTrigger>
             <TabsTrigger value="todos">To-Dos</TabsTrigger>
-            <TabsTrigger value="issues">IDS</TabsTrigger>
+            <TabsTrigger value="issues">Issues</TabsTrigger>
             <TabsTrigger value="conclusion">Conclusion</TabsTrigger>
           </TabsList>
           
