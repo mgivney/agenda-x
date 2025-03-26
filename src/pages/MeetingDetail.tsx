@@ -43,8 +43,8 @@ const MeetingDetail = () => {
     }
   }, [id, meetings]);
 
-  const handleConclusionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setConclusion(e.target.value);
+  const handleConclusionChange = (value: string) => {
+    setConclusion(value);
   };
 
   const saveConclusion = () => {
