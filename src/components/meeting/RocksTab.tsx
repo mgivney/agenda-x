@@ -11,6 +11,14 @@ interface RocksTabProps {
 }
 
 const RocksTab = ({ rocks, onAddRock, onRockStatusChange }: RocksTabProps) => {
+  // Get current quarter number (Q1-Q4 based on current month)
+  const getCurrentQuarter = () => {
+    const month = new Date().getMonth(); // 0-11
+    return `Q${Math.floor(month / 3) + 1}`;
+  };
+  
+  const currentQuarter = getCurrentQuarter();
+  
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
@@ -39,7 +47,7 @@ const RocksTab = ({ rocks, onAddRock, onRockStatusChange }: RocksTabProps) => {
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
                     <h4 className="font-medium">{rock.description}</h4>
-                    <p className="text-sm text-eos-gray">Owner: {rock.owner}</p>
+                    <p className="text-sm text-eos-gray">{currentQuarter} rock for {rock.owner}</p>
                   </div>
                   <div className="flex gap-2">
                     <Button 
