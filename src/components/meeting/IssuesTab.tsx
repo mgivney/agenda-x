@@ -12,6 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -99,12 +100,10 @@ const IssuesTab = ({ issues, meetingId, onAddIssue, onReorderIssues }: IssuesTab
       <Dialog 
         open={isAddDialogOpen} 
         onOpenChange={(open) => {
-          // Only allow the dialog to be closed through button clicks
+          // Only allow the dialog to be closed through button clicks or the close (x) button
           if (!open) {
-            // Don't close the dialog when clicked outside
-            return;
+            handleCloseAddDialog();
           }
-          setIsAddDialogOpen(open);
         }}
       >
         <DialogContent 
@@ -147,7 +146,9 @@ const IssuesTab = ({ issues, meetingId, onAddIssue, onReorderIssues }: IssuesTab
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={handleCloseAddDialog}>Cancel</Button>
+            <DialogClose asChild>
+              <Button variant="outline" onClick={handleCloseAddDialog}>Cancel</Button>
+            </DialogClose>
             <Button 
               onClick={handleCreateIssue} 
               disabled={!isFormValid}
@@ -162,3 +163,4 @@ const IssuesTab = ({ issues, meetingId, onAddIssue, onReorderIssues }: IssuesTab
 };
 
 export default IssuesTab;
+
