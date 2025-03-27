@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -48,7 +47,6 @@ const IssueItem = ({ issue, index, meetingId }: IssueItemProps) => {
     });
   };
 
-  // Lorem ipsum text to add below issue details
   const loremIpsumText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.";
 
   return (
@@ -88,7 +86,7 @@ const IssueItem = ({ issue, index, meetingId }: IssueItemProps) => {
           </CardContent>
         </Card>
         
-        <CollapsibleContent className="mt-1 bg-gray-50 rounded-md p-4 border shadow-sm animate-accordion-down">
+        <CollapsibleContent className="bg-gray-50 rounded-md p-4 border shadow-sm animate-accordion-down">
           <div className="space-y-4">
             <div>
               <h3 className="text-sm font-medium mb-1">Issue Details:</h3>
@@ -98,7 +96,6 @@ const IssueItem = ({ issue, index, meetingId }: IssueItemProps) => {
                   Category: {issue?.category}
                 </div>
                 
-                {/* Add the lorem ipsum text */}
                 <div className="mt-3 pt-3 border-t border-gray-100">
                   <p className="text-sm text-gray-600">{loremIpsumText}</p>
                 </div>
