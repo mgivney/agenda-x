@@ -7,6 +7,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { ChevronDown, ChevronUp, Check, Clock } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useMeetingContext } from "@/store/meetingContext";
+import { format } from 'date-fns';
 
 interface IssueItemProps {
   issue: {
@@ -61,6 +62,7 @@ const IssueItem = ({ issue, index, meetingId }: IssueItemProps) => {
                 <div className="flex justify-between mt-1">
                   <div className="text-sm text-eos-gray">
                     <span>Reported by: {issue.reporter}</span>
+                    <span className="ml-2">Reported on: {format(new Date(issue.createdAt), 'MMM d, yyyy')}</span>
                     {issue.resolved && issue.resolvedAt && (
                       <div className="flex items-center text-green-600 mt-1 text-xs">
                         <Check size={14} className="mr-1" />
