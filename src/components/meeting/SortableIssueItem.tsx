@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -87,8 +88,7 @@ const SortableIssueItem = ({ issue, index, meetingId }: SortableIssueItemProps) 
                 </div>
                 <div className="flex justify-between mt-1">
                   <div className="text-sm text-eos-gray">
-                    <div>Reported by: {issue.reporter}</div>
-                    <div>Reported on: {format(new Date(issue.createdAt), 'MMM d, yyyy')}</div>
+                    <div>Reported by {issue.reporter} on {format(new Date(issue.createdAt), 'MMM d, yyyy')}</div>
                     {issue.resolved && issue.resolvedAt && (
                       <div className="flex items-center text-green-600 mt-1 text-xs">
                         <Check size={14} className="mr-1" />
