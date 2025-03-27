@@ -1,10 +1,11 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import Header from "@/components/Header";
 import { Meeting, useMeetingContext } from "@/store/meetingContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
+import SegueTab from "@/components/meeting/SegueTab";
 import RocksTab from "@/components/meeting/RocksTab";
 import HeadlinesTab from "@/components/meeting/HeadlinesTab";
 import TodosTab from "@/components/meeting/TodosTab";
@@ -28,7 +29,9 @@ const MeetingDetail = () => {
   const [meeting, setMeeting] = useState<Meeting | null>(null);
   const [conclusion, setConclusion] = useState("");
   const [memberRatings, setMemberRatings] = useState<Record<string, number>>({});
+  const [activeTab, setActiveTab] = useState("segue");
   const { toast } = useToast();
+  const tabsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (id) {
@@ -127,6 +130,10 @@ const MeetingDetail = () => {
     }
   };
 
+  const handleStartMeeting = () => {
+    setActiveTab("rocks");
+  };
+
   if (!meeting) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -164,14 +171,27 @@ const MeetingDetail = () => {
           </div>
         </div>
         
-        <Tabs defaultValue="rocks" className="animate-fade-in">
-          <TabsList className="grid grid-cols-5 mb-6">
+        <Tabs 
+          value={activeTab} 
+          onValueChange={setActiveTab}
+          className="animate-fade-in"
+          ref={tabsRef}
+        >
+          <TabsList className="grid grid-cols-6 mb-6">
+            <TabsTrigger value="segue">Segue</TabsTrigger>
             <TabsTrigger value="rocks">Rocks</TabsTrigger>
             <TabsTrigger value="headlines">Headlines</TabsTrigger>
             <TabsTrigger value="todos">To-Dos</TabsTrigger>
             <TabsTrigger value="issues">Issues</TabsTrigger>
             <TabsTrigger value="conclusion">Conclusion</TabsTrigger>
           </TabsList>
+          
+          <TabsContent value="segue">
+            <SegueTab 
+              members={meeting.members}
+              onStartMeeting={handleStartMeeting}
+            />
+          </TabsContent>
           
           <TabsContent value="rocks">
             <RocksTab 
