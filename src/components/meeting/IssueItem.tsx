@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -61,8 +60,8 @@ const IssueItem = ({ issue, index, meetingId }: IssueItemProps) => {
                 </div>
                 <div className="flex justify-between mt-1">
                   <div className="text-sm text-eos-gray">
-                    <span>Reported by: {issue.reporter}</span>
-                    <span className="ml-2">Reported on: {format(new Date(issue.createdAt), 'MMM d, yyyy')}</span>
+                    <div>Reported by: {issue.reporter}</div>
+                    <div>Reported on: {format(new Date(issue.createdAt), 'MMM d, yyyy')}</div>
                     {issue.resolved && issue.resolvedAt && (
                       <div className="flex items-center text-green-600 mt-1 text-xs">
                         <Check size={14} className="mr-1" />

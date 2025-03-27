@@ -66,7 +66,6 @@ const SortableIssueItem = ({ issue, index, meetingId }: SortableIssueItemProps) 
     });
   };
 
-  // Lorem ipsum text to add below issue details
   const loremIpsumText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.";
 
   return (
@@ -88,8 +87,8 @@ const SortableIssueItem = ({ issue, index, meetingId }: SortableIssueItemProps) 
                 </div>
                 <div className="flex justify-between mt-1">
                   <div className="text-sm text-eos-gray">
-                    <span>Reported by: {issue.reporter}</span>
-                    <span className="ml-2">Reported on: {format(new Date(issue.createdAt), 'MMM d, yyyy')}</span>
+                    <div>Reported by: {issue.reporter}</div>
+                    <div>Reported on: {format(new Date(issue.createdAt), 'MMM d, yyyy')}</div>
                     {issue.resolved && issue.resolvedAt && (
                       <div className="flex items-center text-green-600 mt-1 text-xs">
                         <Check size={14} className="mr-1" />
@@ -124,7 +123,6 @@ const SortableIssueItem = ({ issue, index, meetingId }: SortableIssueItemProps) 
                   Category: {issue?.category}
                 </div>
                 
-                {/* Add the lorem ipsum text */}
                 <div className="mt-3 pt-3 border-t border-gray-100">
                   <p className="text-sm text-gray-600">{loremIpsumText}</p>
                 </div>
