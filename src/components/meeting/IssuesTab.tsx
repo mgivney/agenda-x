@@ -96,8 +96,32 @@ const IssuesTab = ({ issues, meetingId, onAddIssue, onReorderIssues }: IssuesTab
         </div>
       )}
 
-      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+      <Dialog 
+        open={isAddDialogOpen} 
+        onOpenChange={(open) => {
+          // Only allow the dialog to be closed through button clicks
+          if (!open) {
+            // Don't close the dialog when clicked outside
+            return;
+          }
+          setIsAddDialogOpen(open);
+        }}
+      >
+        <DialogContent 
+          className="sm:max-w-md"
+          onPointerDownOutside={(e) => {
+            // Prevent closing when clicking outside
+            e.preventDefault();
+          }}
+          onEscapeKeyDown={(e) => {
+            // Prevent closing when pressing escape
+            e.preventDefault();
+          }}
+          onInteractOutside={(e) => {
+            // Prevent any interactions outside the dialog from closing it
+            e.preventDefault();
+          }}
+        >
           <DialogHeader>
             <DialogTitle>Add New Issue</DialogTitle>
           </DialogHeader>
