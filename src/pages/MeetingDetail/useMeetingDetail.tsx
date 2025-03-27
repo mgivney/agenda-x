@@ -111,7 +111,7 @@ export const useMeetingDetail = (id: string | undefined) => {
       const newIssue = {
         description: issueData.description,
         reporter: meeting.members[0],
-        category: issueData.category,
+        category: "", // Keeping empty string for category as we're removing it
         details: issueData.details,
         createdAt: new Date().toISOString().split('T')[0]
       };

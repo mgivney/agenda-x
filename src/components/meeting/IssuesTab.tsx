@@ -29,7 +29,6 @@ const IssuesTab = ({ issues, meetingId, onAddIssue, onReorderIssues }: IssuesTab
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [newIssueTitle, setNewIssueTitle] = useState("");
   const [newIssueDetails, setNewIssueDetails] = useState("");
-  const [newIssueCategory, setNewIssueCategory] = useState("General");
   
   // Filter out resolved issues
   const activeIssues = issues.filter(issue => !issue.resolved);
@@ -43,7 +42,6 @@ const IssuesTab = ({ issues, meetingId, onAddIssue, onReorderIssues }: IssuesTab
     // Clear form fields
     setNewIssueTitle("");
     setNewIssueDetails("");
-    setNewIssueCategory("General");
   };
 
   const handleCreateIssue = () => {
@@ -51,7 +49,7 @@ const IssuesTab = ({ issues, meetingId, onAddIssue, onReorderIssues }: IssuesTab
       onAddIssue({
         description: newIssueTitle,
         details: newIssueDetails,
-        category: newIssueCategory
+        category: "" // Keeping empty string for compatibility with existing interface
       });
       
       toast({
@@ -121,15 +119,6 @@ const IssuesTab = ({ issues, meetingId, onAddIssue, onReorderIssues }: IssuesTab
                 className="min-h-[100px]"
                 value={newIssueDetails}
                 onChange={(e) => setNewIssueDetails(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="issue-category">Category</Label>
-              <Input
-                id="issue-category"
-                placeholder="Category"
-                value={newIssueCategory}
-                onChange={(e) => setNewIssueCategory(e.target.value)}
               />
             </div>
           </div>
