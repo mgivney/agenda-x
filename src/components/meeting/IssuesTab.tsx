@@ -5,19 +5,65 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Plus } from "lucide-react";
 import IssueItem from "./IssueItem";
 import { useToast } from "@/components/ui/use-toast";
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 
 interface IssuesTabProps {
   issues: Issue[];
   meetingId: string;
-  onAddIssue?: () => void;
+  onAddIssue?: (issueData: { description: string; details: string; category: string }) => void;
   onReorderIssues: (oldIndex: number, newIndex: number) => void;
 }
 
-const IssuesTab = ({ issues, meetingId, onAddIssue }: IssuesTabProps) => {
+const IssuesTab = ({ issues, meetingId, onAddIssue, onReorderIssues }: IssuesTabProps) => {
   const { toast } = useToast();
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [newIssueTitle, setNewIssueTitle] = useState("");
+  const [newIssueDetails, setNewIssueDetails] = useState("");
+  const [newIssueCategory, setNewIssueCategory] = useState("General");
   
   // Filter out resolved issues
   const activeIssues = issues.filter(issue => !issue.resolved);
+
+  const handleOpenAddDialog = () => {
+    setIsAddDialogOpen(true);
+  };
+
+  const handleCloseAddDialog = () => {
+    setIsAddDialogOpen(false);
+    // Clear form fields
+    setNewIssueTitle("");
+    setNewIssueDetails("");
+    setNewIssueCategory("General");
+  };
+
+  const handleCreateIssue = () => {
+    if (onAddIssue) {
+      onAddIssue({
+        description: newIssueTitle,
+        details: newIssueDetails,
+        category: newIssueCategory
+      });
+      
+      toast({
+        title: "Issue created",
+        description: "The issue has been successfully added.",
+      });
+      
+      handleCloseAddDialog();
+    }
+  };
+
+  const isFormValid = newIssueTitle.trim() !== "" && newIssueDetails.trim() !== "";
 
   return (
     <div className="space-y-4">
@@ -27,7 +73,7 @@ const IssuesTab = ({ issues, meetingId, onAddIssue }: IssuesTabProps) => {
           size="sm" 
           variant="outline" 
           className="flex items-center gap-1"
-          onClick={onAddIssue}
+          onClick={handleOpenAddDialog}
         >
           <Plus size={16} /> Add Issue
         </Button>
@@ -51,6 +97,53 @@ const IssuesTab = ({ issues, meetingId, onAddIssue }: IssuesTabProps) => {
           ))}
         </div>
       )}
+
+      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Add New Issue</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="issue-title">Issue Title <span className="text-red-500">*</span></Label>
+              <Input
+                id="issue-title"
+                placeholder="Enter issue title"
+                value={newIssueTitle}
+                onChange={(e) => setNewIssueTitle(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="issue-details">Issue Details <span className="text-red-500">*</span></Label>
+              <Textarea
+                id="issue-details"
+                placeholder="Describe the issue in detail"
+                className="min-h-[100px]"
+                value={newIssueDetails}
+                onChange={(e) => setNewIssueDetails(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="issue-category">Category</Label>
+              <Input
+                id="issue-category"
+                placeholder="Category"
+                value={newIssueCategory}
+                onChange={(e) => setNewIssueCategory(e.target.value)}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={handleCloseAddDialog}>Cancel</Button>
+            <Button 
+              onClick={handleCreateIssue} 
+              disabled={!isFormValid}
+            >
+              Create Issue
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

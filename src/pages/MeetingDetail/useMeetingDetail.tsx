@@ -106,12 +106,13 @@ export const useMeetingDetail = (id: string | undefined) => {
     }
   };
 
-  const handleAddIssue = () => {
+  const handleAddIssue = (issueData: { description: string; details: string; category: string }) => {
     if (id && meeting) {
       const newIssue = {
-        description: "New issue",
+        description: issueData.description,
         reporter: meeting.members[0],
-        category: "General",
+        category: issueData.category,
+        details: issueData.details,
         createdAt: new Date().toISOString().split('T')[0]
       };
       addIssue(id, newIssue);
