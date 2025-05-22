@@ -1,5 +1,5 @@
 
-import { Rock } from "@/store/meetingContext";
+import { Rock } from "@/store/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus, CheckCircle, XCircle, Circle } from "lucide-react";

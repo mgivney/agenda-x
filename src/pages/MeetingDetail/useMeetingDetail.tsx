@@ -1,6 +1,6 @@
-
 import { useState, useEffect } from "react";
-import { Meeting, useMeetingContext } from "@/store/meetingContext";
+import { Meeting } from "@/store/types";
+import { useMeetingContext } from "@/store/meetingContext";
 import { useToast } from "@/hooks/use-toast";
 
 export const useMeetingDetail = (id: string | undefined) => {
